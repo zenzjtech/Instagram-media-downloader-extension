@@ -6,9 +6,12 @@ var webpack = require("webpack"),
     CopyWebpackPlugin = require("copy-webpack-plugin"),
     HtmlWebpackPlugin = require("html-webpack-plugin"),
     WriteFilePlugin = require("write-file-webpack-plugin");
+MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // load the secrets
 var alias = {};
+
+console.log(env.NODE_ENV);
 
 var secretsPath = path.join(__dirname, ("secrets." + env.NODE_ENV + ".js"));
 
@@ -25,6 +28,9 @@ var options = {
     options: path.join(__dirname, "src", "js", "options.js"),
     background: path.join(__dirname, "src", "js", "background.js"),
     contentScript: path.join(__dirname, "src", "js", "content-script.js")
+  },
+  chromeExtensionBoilerplate: {
+    notHotReload: ["contentScript"]
   },
   output: {
     path: path.join(__dirname, "build"),
@@ -68,6 +74,11 @@ var options = {
         }))
       }
     }]),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',  // prepend folder name
+      chunkFilename: '[name].[id].css',    // prepend folder name
+      ignoreOrder: false,
+    }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "popup.html"),
       filename: "popup.html",
@@ -87,8 +98,9 @@ var options = {
   ]
 };
 
-if (env.NODE_ENV === "development") {
+/*if (env.NODE_ENV === "development") {
   options.devtool = "cheap-module-eval-source-map";
-}
+}*/
+options.devtool = "cheap-module-eval-source-map";
 
 module.exports = options;
