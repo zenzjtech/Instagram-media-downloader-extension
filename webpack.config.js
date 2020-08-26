@@ -5,8 +5,7 @@ var webpack = require("webpack"),
   CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin,
   CopyWebpackPlugin = require("copy-webpack-plugin"),
   HtmlWebpackPlugin = require("html-webpack-plugin"),
-  WriteFilePlugin = require("write-file-webpack-plugin"),
-  CopyPlugin = require('copy-webpack-plugin');
+  WriteFilePlugin = require("write-file-webpack-plugin");
 
 // load the secrets
 var alias = {};
@@ -26,8 +25,8 @@ var options = {
   entry: {
     popup: path.join(__dirname, "src", "js", "popup.js"),
     options: path.join(__dirname, "src", "js", "options.js"),
-    background: path.join(__dirname, "src", "js", "background.js"),
-    contentScript: path.join(__dirname, "src", "js", "content-script.js")
+    background: path.join(__dirname, "src", "js", "background", "index.js"),
+    contentScript: path.join(__dirname, "src", "js", "content-scripts", "index.js")
   },
   chromeExtensionBoilerplate: {
     notHotReload: ["contentScript"]
@@ -56,7 +55,8 @@ var options = {
     ]
   },
   resolve: {
-    alias: alias
+    alias: alias,
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
   },
   plugins: [
     // clean the build folder
@@ -74,9 +74,14 @@ var options = {
         }))
       }
     }]),
-    new CopyPlugin([{
+    new CopyWebpackPlugin([{
       from: 'src/css/inject.css',
       to: 'inject.css',
+      toType: 'file'
+    }]),
+    new CopyWebpackPlugin([{
+      from: 'src/img/download.png',
+      to: 'download.png',
       toType: 'file'
     }]),
     new HtmlWebpackPlugin({
@@ -88,11 +93,6 @@ var options = {
       template: path.join(__dirname, "src", "options.html"),
       filename: "options.html",
       chunks: ["options"]
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "background.html"),
-      filename: "background.html",
-      chunks: ["background"]
     }),
     new WriteFilePlugin()
   ]
