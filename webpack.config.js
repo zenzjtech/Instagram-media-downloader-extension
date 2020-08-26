@@ -1,12 +1,12 @@
 var webpack = require("webpack"),
-    path = require("path"),
-    fileSystem = require("fs"),
-    env = require("./utils/env"),
-    CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin,
-    CopyWebpackPlugin = require("copy-webpack-plugin"),
-    HtmlWebpackPlugin = require("html-webpack-plugin"),
-    WriteFilePlugin = require("write-file-webpack-plugin");
-MiniCssExtractPlugin = require('mini-css-extract-plugin');
+  path = require("path"),
+  fileSystem = require("fs"),
+  env = require("./utils/env"),
+  CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin,
+  CopyWebpackPlugin = require("copy-webpack-plugin"),
+  HtmlWebpackPlugin = require("html-webpack-plugin"),
+  WriteFilePlugin = require("write-file-webpack-plugin"),
+  CopyPlugin = require('copy-webpack-plugin');
 
 // load the secrets
 var alias = {};
@@ -74,11 +74,11 @@ var options = {
         }))
       }
     }]),
-    new MiniCssExtractPlugin({
-      filename: '[name].css',  // prepend folder name
-      chunkFilename: '[name].[id].css',    // prepend folder name
-      ignoreOrder: false,
-    }),
+    new CopyPlugin([{
+      from: 'src/css/inject.css',
+      to: 'inject.css',
+      toType: 'file'
+    }]),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "popup.html"),
       filename: "popup.html",
