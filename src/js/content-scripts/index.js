@@ -2,6 +2,14 @@ import { MSG_DOWNLOAD_FILE } from '../constants';
 
 const icon = chrome.runtime.getURL('download.png');
 const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
+const getHighestResolutionImg = image => {
+	if (image.srcset) {
+		const imgset = image.srcset.split(',');
+		const lastImage = imgset[imgset.length - 1];
+		return lastImage.split(' ')[0];
+	}
+	return image && image.src ? image.src : '';
+}
 
 const clean = function () {
 	observer.disconnect();
@@ -52,7 +60,7 @@ const action = function () {
 				/*  */
 				const parent = this.parentNode.parentNode;
 				const image = parent.querySelector("img");
-				const src = image && image.src ? image.src : '';
+				const src = getHighestResolutionImg(image);
 				if (src)
 					chrome.runtime.sendMessage({
 						type: MSG_DOWNLOAD_FILE,
