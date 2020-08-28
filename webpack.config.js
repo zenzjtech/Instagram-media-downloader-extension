@@ -1,11 +1,11 @@
 var webpack = require("webpack"),
-    path = require("path"),
-    fileSystem = require("fs"),
-    env = require("./utils/env"),
-    CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin,
-    CopyWebpackPlugin = require("copy-webpack-plugin"),
-    HtmlWebpackPlugin = require("html-webpack-plugin"),
-    WriteFilePlugin = require("write-file-webpack-plugin");
+  path = require("path"),
+  fileSystem = require("fs"),
+  env = require("./utils/env"),
+  CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin,
+  CopyWebpackPlugin = require("copy-webpack-plugin"),
+  HtmlWebpackPlugin = require("html-webpack-plugin"),
+  WriteFilePlugin = require("write-file-webpack-plugin");
 
 // load the secrets
 var alias = {};
@@ -23,7 +23,11 @@ var options = {
   entry: {
     popup: path.join(__dirname, "src", "js", "popup.js"),
     options: path.join(__dirname, "src", "js", "options.js"),
-    background: path.join(__dirname, "src", "js", "background.js")
+    background: path.join(__dirname, "src", "js", "background", "index.js"),
+    contentScript: path.join(__dirname, "src", "js", "content-scripts", "index.js")
+  },
+  chromeExtensionBoilerplate: {
+    notHotReload: ["contentScript"]
   },
   output: {
     path: path.join(__dirname, "build"),
@@ -55,7 +59,8 @@ var options = {
   },
   resolve: {
     alias: alias,
-    extensions: fileExtensions.map(extension => ("." + extension)).concat([".jsx", ".js", ".css"])
+    extensions: fileExtensions.map(extension => ("." + extension)).concat([".jsx", ".js", ".css"]),
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
   },
   plugins: [
     // clean the build folder
@@ -73,6 +78,16 @@ var options = {
         }))
       }
     }]),
+    new CopyWebpackPlugin([{
+      from: 'src/css/inject.css',
+      to: 'inject.css',
+      toType: 'file'
+    }]),
+    new CopyWebpackPlugin([{
+      from: 'src/img/download.png',
+      to: 'download.png',
+      toType: 'file'
+    }]),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "popup.html"),
       filename: "popup.html",
@@ -83,17 +98,13 @@ var options = {
       filename: "options.html",
       chunks: ["options"]
     }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "background.html"),
-      filename: "background.html",
-      chunks: ["background"]
-    }),
     new WriteFilePlugin()
   ]
 };
 
-if (env.NODE_ENV === "development") {
+/*if (env.NODE_ENV === "development") {
   options.devtool = "cheap-module-eval-source-map";
-}
+}*/
+options.devtool = "cheap-module-eval-source-map";
 
 module.exports = options;
