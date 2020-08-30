@@ -1,5 +1,5 @@
 import { MSG_DOWNLOAD_FILE } from '../constants'
-console.log(MSG_DOWNLOAD_FILE);
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	switch (request.type) {
 		case MSG_DOWNLOAD_FILE:
@@ -12,3 +12,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	}
 	return true;
 })
+
+chrome.webRequest.onCompleted.addListener(function (details) {
+		console.log(details);
+	}, { urls: ["*://*.instagram.com/graphql/query/?query_hash=*"]}
+)

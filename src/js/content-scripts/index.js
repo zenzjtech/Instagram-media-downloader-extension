@@ -1,7 +1,10 @@
 import { MSG_DOWNLOAD_FILE } from '../constants';
+require('./inject');
+
+const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
 
 const icon = chrome.runtime.getURL('download.png');
-const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
+
 const getHighestResolutionImg = image => {
 	if (image.srcset) {
 		const imgset = image.srcset.split(',');
@@ -9,6 +12,21 @@ const getHighestResolutionImg = image => {
 		return lastImage.split(' ')[0];
 	}
 	return image && image.src ? image.src : '';
+}
+
+function getVideoOrImage(media) {
+	// if this post is a video
+	if (media.tagName === 'VIDEO') {
+		const source = media.querySelector('source');
+		return source.src;
+	}
+	let src = media && media.src ? media.src : '';
+	// If this post is a reference to a video
+	const found = videoData.find(data => data.thumbnail_src === src);
+	if (found)
+		return found.video_url;
+	// Else this is an image
+	return getHighestResolutionImg(media);
 }
 
 const clean = function () {
@@ -37,8 +55,10 @@ const observer = new MutationObserver(function (m) {
 });
 
 const action = function () {
-	const images = document.querySelectorAll("img");
-	images.forEach(image => {
+	const images = Array.from(document.querySelectorAll("img"));
+	const videos = Array.from(document.querySelectorAll('video'));
+	const media = images.concat(videos);
+	media.forEach(image => {
 		let button = image.getAttribute("button");
 		if (!button) {
 			image.setAttribute("button", "IDFI-BUTTON");
@@ -54,13 +74,14 @@ const action = function () {
 			button.addEventListener("mouseenter", function () {this.style.opacity = "1.0"});
 			button.addEventListener("mouseleave", function () {this.style.opacity = "0.3"});
 			/*  */
-			button.addEventListener("click", function (e) {
+			button.addEventListener("click", async function (e) {
 				e.preventDefault();
 				e.stopPropagation();
 				/*  */
+				
 				const parent = this.parentNode.parentNode;
-				const image = parent.querySelector("img");
-				const src = getHighestResolutionImg(image);
+				const media = parent.querySelector("video") || parent.querySelector('img');
+				const src = getVideoOrImage(media);
 				if (src)
 					chrome.runtime.sendMessage({
 						type: MSG_DOWNLOAD_FILE,
@@ -77,3 +98,9 @@ const action = function () {
 };
 
 load();
+
+let videoData = [];
+window.addEventListener('message', function(event) {
+	if (event.data && event.data.type === 'videoData')
+		videoData = event.data.videoData;
+})
