@@ -1,3 +1,14 @@
+const capturedUrlPatterns = [
+	'?__a=1',
+	'graphql/query/?query_hash='
+];
+
+const checkUrlPattern = (url) => {
+	if (!url)
+		return false;
+	return capturedUrlPatterns.find(pattern => url.includes(pattern)) !== undefined;
+}
+
 (function(xhr) {
 	
 	console.log('Inside capture XHR Response');
@@ -21,7 +32,7 @@
 		this.addEventListener('load', function() {
 			
 			var myUrl = this._url ? this._url.toLowerCase() : this._url;
-			if(myUrl && myUrl.includes('graphql/query/?query_hash=')) {
+			if (checkUrlPattern(myUrl)) {
 					const postData = JSON.parse(this.responseText).data;
 					filterVideoData(postData);
 					window.postMessage({ type: 'videoData', videoData} , '*');
@@ -46,3 +57,4 @@ function filterVideoData(data) {
 		filterVideoData(value);
 	});
 }
+

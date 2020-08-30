@@ -1,5 +1,7 @@
 import { MSG_DOWNLOAD_FILE } from '../constants';
 require('./inject');
+import { fetchAdditionalData } from './additionalQuery';
+
 
 const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
 
@@ -57,8 +59,8 @@ const observer = new MutationObserver(function (m) {
 const action = function () {
 	const images = Array.from(document.querySelectorAll("img"));
 	const videos = Array.from(document.querySelectorAll('video'));
-	const media = images.concat(videos);
-	media.forEach(image => {
+	const videoAndImage = images.concat(videos);
+	videoAndImage.forEach(image => {
 		let button = image.getAttribute("button");
 		if (!button) {
 			image.setAttribute("button", "IDFI-BUTTON");
@@ -100,7 +102,27 @@ const action = function () {
 load();
 
 let videoData = [];
+
+function filterVideoData(data) {
+	if (typeof data !== 'object' || data === null)
+		return;
+	if (data.video_url && !videoData.find(video => video.video_url === data.video_url))
+		videoData.push({
+			video_url: data.video_url,
+			thumbnail_src: data.thumbnail_src
+		})
+	Object.entries(data).forEach(([key, value]) => {
+		filterVideoData(value);
+	});
+}
+
+fetchAdditionalData().then(data => {
+	console.log(videoData);
+	return filterVideoData(data);
+	console.log(data);
+}).then(() => {console.log(videoData)});
+
 window.addEventListener('message', function(event) {
 	if (event.data && event.data.type === 'videoData')
-		videoData = event.data.videoData;
+		videoData = videoData.concat(event.data.videoData);
 })
