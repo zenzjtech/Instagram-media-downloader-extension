@@ -25,7 +25,8 @@
     {
       "matches": ["*://*.instagram.com/*"],
       "js": ["contentScript.bundle.js"],
-      "css": ["inject.css"]
+      "css": ["inject.css"],
+      "runAt": "document_end"
     }
   ],
   "manifest_version": 2,

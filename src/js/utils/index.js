@@ -10,6 +10,29 @@ function handleResponse(response) {
 	});
 }
 
+const fetchAdditionalData = async () => {
+	const postFix = '?__a=1'
+	try {
+		console.log(document.URL);
+		let response = await fetch(`${document.URL}${postFix}`).then(handleResponse);
+		return response;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const fetchSingleNodeData = async (url) => {
+	const postFix = '?__a=1'
+	try {
+		let response = await fetch(`${url}${postFix}`).then(handleResponse);
+		return response;
+	} catch (error) {
+		throw error;
+	}
+}
+
 module.exports = {
-	handleResponse
+	handleResponse,
+	fetchAdditionalData,
+	fetchSingleNodeData
 }
