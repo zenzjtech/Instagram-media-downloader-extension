@@ -12,7 +12,8 @@
   ],
   "web_accessible_resources": [
     "*.png",
-    "captureXHRResponse.js"
+    "captureXHRResponse.js",
+    "asset/img/*.*"
   ],
   "browser_action": {
     "default_popup": "popup.html",

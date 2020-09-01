@@ -54,3 +54,13 @@
         opacity: 0;
     }
 }
+
+.download-all {
+    /*background-image: url(chrome-extension://ldhkjlebopicmnjbfmfmfegahogdejol/img/download_all.svg);*/
+    background-size: auto;
+    cursor: pointer;
+    height: 22px;
+    width: 22px;
+    background-position: center center;
+    background-repeat: no-repeat;
+}

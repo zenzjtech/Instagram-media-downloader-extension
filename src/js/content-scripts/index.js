@@ -5,11 +5,12 @@ import { MSG_DOWNLOAD_FILE, IGTV_CLASSNAME_IDENTIFIER,
 } from '../constants';
 import { fetchAdditionalData, fetchSingleNodeData } from '../utils/';
 require('./inject');
+require('./bulkdownload')
 
 var oldHref = document.location.href;
 const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
 
-const icon = chrome.runtime.getURL('download.png');
+const icon = chrome.runtime.getURL('asset/img/download.png');
 
 const getHighestResolutionImg = image => {
 	if (image.srcset) {

@@ -89,9 +89,8 @@ var options = {
       toType: 'file'
     }]),
     new CopyWebpackPlugin([{
-      from: 'src/img/download.png',
-      to: 'download.png',
-      toType: 'file'
+      from: 'src/img/public',
+      to: 'asset/img',
     }]),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "popup.html"),
