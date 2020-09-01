@@ -3,7 +3,8 @@ function handleResponse(response) {
 		const data = text && JSON.parse(text);
 		if (!response.ok) {
 			const error = (data && data.message) || response.statusText;
-			throw error;
+			console.log(error);
+			// throw error;
 		}
 		
 		return data;

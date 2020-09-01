@@ -1,4 +1,8 @@
-import { MSG_DOWNLOAD_FILE, IGTV_CLASSNAME_IDENTIFIER } from '../constants';
+import { MSG_DOWNLOAD_FILE, IGTV_CLASSNAME_IDENTIFIER,
+	TAGGED_CLASSNAME_IDENTIFIED,
+	LOADER_CLASSNAME,
+	DOWNLOADER_CLASSNAME
+} from '../constants';
 import { fetchAdditionalData, fetchSingleNodeData } from '../utils/';
 require('./inject');
 
@@ -76,52 +80,100 @@ function getMediaNode() {
 }
 
 async function getMediaSrc(node) {
+	const containerNode = node.parentElement.parentElement;
 	// If this node is in IGTV
 	if (node.className === IGTV_CLASSNAME_IDENTIFIER) {
-		const data = await fetchSingleNodeData(node.parentElement.parentElement.href);
+		const data = await loadingWrapper(
+			fetchSingleNodeData,
+			containerNode,
+			containerNode.href
+		);
 		currentNodeVideoUrl = '';
 		findVideoUrl(data);
 		console.log(currentNodeVideoUrl, data);
 		return currentNodeVideoUrl;
 	}
+	if (node.className === TAGGED_CLASSNAME_IDENTIFIED) {
+		const isVideo = containerNode.parentElement.querySelector('[aria-label="Video"]') !== null;
+		if (isVideo) {
+			const data = await loadingWrapper(
+				fetchSingleNodeData,
+				containerNode.parentElement,
+				containerNode.parentElement.href
+			);
+			currentNodeVideoUrl = '';
+			findVideoUrl(data);
+			console.log(currentNodeVideoUrl, data);
+			return currentNodeVideoUrl;
+		}
+	}
 	// Homepage or feed
 	const src = getVideoOrImageSrc(node);
 	return src;
 }
+
+function createButton(media) {
+	media.setAttribute("button", "IDFI-BUTTON");
+	/*  */
+	let button = document.createElement("span");
+	button.setAttribute("type", "IDFI-BUTTON");
+	button.setAttribute("class", "IDFI-BUTTON");
+	button.setAttribute("title", "Download Image");
+	button.style.background = `#FFF no-repeat center center`;
+	button.style.backgroundImage = `url(${icon})`
+	button.style.backgroundSize = "16px";
+	/*  */
+	button.addEventListener("mouseenter", function () {this.style.opacity = "1.0"});
+	button.addEventListener("mouseleave", function () {this.style.opacity = "0.3"});
+	/*  */
+	button.addEventListener("click", async function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		/*  */
+		const src = await getMediaSrc(this.previousElementSibling);
+		if (src)
+			chrome.runtime.sendMessage({
+				type: MSG_DOWNLOAD_FILE,
+				payload: src
+			}, function(response) {
+				console.log(response);
+			})
+	});
+	return button;
+}
+
+function createLoader() {
+	let loader = document.createElement('div');
+	loader.innerHTML = '<div></div><div></div>';
+	loader.className = LOADER_CLASSNAME;
+	return loader;
+}
+
+// TODO: hangle generic args
+async function loadingWrapper(func, node, args) {
+	const loader = node.getElementsByClassName(LOADER_CLASSNAME)[0];
+	const downloadBtn = node.getElementsByClassName(DOWNLOADER_CLASSNAME)[0];
+	if (loader) {
+		loader.style.visibility = 'visible';
+	}
+	downloadBtn.style.visibility = 'hidden';
+	const result = await func(args);
+	loader.style.visibility = 'hidden';
+	downloadBtn.style.visibility = 'visible';
+	return result;
+}
+
 const action = function () {
 	const videoAndImage = getMediaNode();
-	videoAndImage.forEach(image => {
-		let button = image.getAttribute("button");
+	videoAndImage.forEach(media => {
+		let button = media.getAttribute("button");
 		if (!button) {
-			image.setAttribute("button", "IDFI-BUTTON");
+			button = createButton(media);
+			const loader = createLoader(media);
 			/*  */
-			button = document.createElement("span");
-			button.setAttribute("type", "IDFI-BUTTON");
-			button.setAttribute("class", "IDFI-BUTTON");
-			button.setAttribute("title", "Download Image");
-			button.style.background = `#FFF no-repeat center center`;
-			button.style.backgroundImage = `url(${icon})`
-			button.style.backgroundSize = "16px";
-			/*  */
-			button.addEventListener("mouseenter", function () {this.style.opacity = "1.0"});
-			button.addEventListener("mouseleave", function () {this.style.opacity = "0.3"});
-			/*  */
-			button.addEventListener("click", async function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-				/*  */
-				const src = await getMediaSrc(this.previousElementSibling);
-				if (src)
-					chrome.runtime.sendMessage({
-						type: MSG_DOWNLOAD_FILE,
-						payload: src
-					}, function(response) {
-						console.log(response);
-					})
-			});
-			/*  */
-			image.after(button);
-			image.parentNode.style.display = "flex";
+			media.after(button);
+			button.after(loader);
+			media.parentNode.style.display = "flex";
 		}
 	})
 };
