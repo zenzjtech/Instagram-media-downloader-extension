@@ -25,7 +25,12 @@
   "content_scripts": [
     {
       "matches": ["*://*.instagram.com/*"],
-      "js": ["contentScript.bundle.js"],
+      "js": [
+        "asset/js/jquery-3.5.1.slim.min.js",
+        "asset/js/popper.min.js",
+        "asset/js/bootstrap.min.js",
+        "contentScript.bundle.js"
+      ],
       "css": ["asset/css/inject.css", "asset/css/bootstrap.min.css"],
       "runAt": "document_end"
     }

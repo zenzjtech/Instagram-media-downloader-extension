@@ -56,11 +56,29 @@
 }
 
 .download-all {
-    /*background-image: url(chrome-extension://ldhkjlebopicmnjbfmfmfegahogdejol/img/download_all.svg);*/
     background-size: auto;
     cursor: pointer;
     height: 22px;
     width: 22px;
     background-position: center center;
     background-repeat: no-repeat;
+}
+
+.download-all-modal {
+    display: block;
+    right: -140px;
+    z-index: 11;
+    top: 38px;
+    height: auto;
+    width: 300px;
+    position: absolute;
+    box-shadow: rgba(0, 0, 0, 0.098) 0px 0px 5px 1px;
+    font-family: "lucida grande", sans-serif;
+    background: rgb(255, 255, 255);
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(230, 230, 230);
+    border-image: initial;
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out 0s;
 }

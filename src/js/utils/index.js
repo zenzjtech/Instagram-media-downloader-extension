@@ -18,7 +18,8 @@ const fetchAdditionalData = async () => {
 		let response = await fetch(`${document.URL}${postFix}`).then(handleResponse);
 		return response;
 	} catch (error) {
-		throw error;
+		console.log(error);
+		// throw error;
 	}
 };
 

@@ -82,6 +82,10 @@ var options = {
       from: 'src/css/public',
       to: 'asset/css'
     }]),
+		new CopyWebpackPlugin([{
+			from: 'src/js/content-scripts/public',
+			to: 'asset/js'
+		}]),
     new CopyWebpackPlugin([{
       from: 'src/js/content-scripts/captureXHRResponse.js',
       to: 'captureXHRResponse.js',
