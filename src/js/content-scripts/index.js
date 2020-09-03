@@ -1,16 +1,17 @@
 import { MSG_DOWNLOAD_FILE, IGTV_CLASSNAME_IDENTIFIER,
 	TAGGED_CLASSNAME_IDENTIFIED,
 	LOADER_CLASSNAME,
-	DOWNLOADER_CLASSNAME
+	IDFI_BUTTON
 } from '../constants';
 import { fetchAdditionalData, fetchSingleNodeData } from '../utils/';
+import { loadBulkDownloadUI } from './bulkdownload';
 require('./inject');
-require('./bulkdownload')
 
 let oldHref = document.location.href;
+let videoData = [];
+const icon = chrome.runtime.getURL('asset/img/download.png');
 const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
 
-const icon = chrome.runtime.getURL('asset/img/download.png');
 const getHighestResolutionImg = image => {
 	if (image.srcset) {
 		const imgset = image.srcset.split(',');
@@ -46,9 +47,7 @@ async function getMediaSrc(node) {
 			containerNode,
 			containerNode.href
 		);
-		currentNodeVideoUrl = '';
-		findVideoUrl(data);
-		console.log(currentNodeVideoUrl, data);
+		const currentNodeVideoUrl = getCurrentVideoUrl(data);
 		return currentNodeVideoUrl;
 	}
 	if (node.className === TAGGED_CLASSNAME_IDENTIFIED) {
@@ -59,9 +58,7 @@ async function getMediaSrc(node) {
 				containerNode.parentElement,
 				containerNode.parentElement.href
 			);
-			currentNodeVideoUrl = '';
-			findVideoUrl(data);
-			console.log(currentNodeVideoUrl, data);
+			const currentNodeVideoUrl = getCurrentVideoUrl(data);
 			return currentNodeVideoUrl;
 		}
 	}
@@ -73,20 +70,24 @@ async function getMediaSrc(node) {
 const clean = function () {
 	observer.disconnect();
 	/*  */
-	const elements = [...document.querySelectorAll("span[class='IDFI-BUTTON']")];
+	const elements = [...document.querySelectorAll(`span[class='${IDFI_BUTTON}']`)];
 	for (let i = 0; i < elements.length; i++) {
 		if (elements[i]) elements[i].remove();
 	}
 };
 
+function handleUrlChange() {
+	loadBulkDownloadUI();
+	oldHref = document.location.href;
+	(async () => {
+		videoData = await receiveNewVideoData(videoData);
+	})();
+}
+
 const observer = new MutationObserver(function (m) {
 	for (let i = 0; i < m.length; i++) {
 		if (oldHref != document.location.href) {
-			oldHref = document.location.href;
-			fetchAdditionalData().then(data => {
-				console.log(videoData);
-				return filterVideoData(data);
-			}).then(() => {console.log(videoData)});
+			handleUrlChange();
 		}
 		const mutation = m[i];
 		if (mutation.addedNodes && mutation.addedNodes.length > 0) {
@@ -95,7 +96,7 @@ const observer = new MutationObserver(function (m) {
 				const tmp = mutation.addedNodes[j];
 				if (tmp.nodeType === Node.ELEMENT_NODE) {
 					const type = tmp.getAttribute("type");
-					if (!type || (type && type.indexOf("DFI-BUTTON") === -1))
+					if (!type || (type && type.indexOf(IDFI_BUTTON) === -1))
 						action(true);
 				}
 			}
@@ -113,11 +114,11 @@ function getMediaNode() {
 }
 
 function createButton(media) {
-	media.setAttribute("button", "IDFI-BUTTON");
+	media.setAttribute("button", IDFI_BUTTON);
 	/*  */
 	let button = document.createElement("span");
-	button.setAttribute("type", "IDFI-BUTTON");
-	button.setAttribute("class", "IDFI-BUTTON");
+	button.setAttribute("type", IDFI_BUTTON);
+	button.setAttribute("class", IDFI_BUTTON);
 	button.setAttribute("title", "Download Image");
 	button.style.background = `#FFF no-repeat center center`;
 	button.style.backgroundImage = `url(${icon})`
@@ -152,7 +153,7 @@ function createLoader() {
 // TODO: hangle generic args
 async function loadingWrapper(func, node, args) {
 	const loader = node.getElementsByClassName(LOADER_CLASSNAME)[0];
-	const downloadBtn = node.getElementsByClassName(DOWNLOADER_CLASSNAME)[0];
+	const downloadBtn = node.getElementsByClassName(IDFI_BUTTON)[0];
 	if (loader) {
 		loader.style.visibility = 'visible';
 	}
@@ -178,40 +179,54 @@ const action = function () {
 	})
 };
 
+function extractVideoData(data) {
+	let tempVideos = [];
+	function mineVideo(data) {
+		if (typeof data !== 'object' || data === null)
+			return;
+		if (data.video_url && !tempVideos.find(video => video.video_url === data.video_url))
+			tempVideos.push({
+				video_url: data.video_url,
+				thumbnail_src: data.thumbnail_src
+			})
+		Object.entries(data).forEach(([key, value]) => {
+			mineVideo(value);
+		});
+	}
+	mineVideo(data);
+	return tempVideos;
+}
+
+function getCurrentVideoUrl(data) {
+	let currentNodeVideoUrl = '';
+	function findVideoUrl(data) {
+		if (typeof data !== 'object' || data === null)
+			return;
+		if (data.video_url)
+			currentNodeVideoUrl = data.video_url;
+		Object.entries(data).forEach(([key, value]) => {
+			findVideoUrl(value);
+		});
+	}
+	findVideoUrl(data);
+	return currentNodeVideoUrl;
+}
+
+
+async function receiveNewVideoData(currentVideoData) {
+	let newVideoData = await fetchAdditionalData();
+	newVideoData = extractVideoData(newVideoData);
+	newVideoData = newVideoData
+		.filter(video => !currentVideoData.find(video1 => video1.video_url === video.url));
+		
+	return [...currentVideoData].concat(newVideoData);
+}
+
+(async () => {
+	videoData = await receiveNewVideoData(videoData)
+})();
 load();
-
-let videoData = [];
-
-function filterVideoData(data) {
-	if (typeof data !== 'object' || data === null)
-		return;
-	if (data.video_url && !videoData.find(video => video.video_url === data.video_url))
-		videoData.push({
-			video_url: data.video_url,
-			thumbnail_src: data.thumbnail_src
-		})
-	Object.entries(data).forEach(([key, value]) => {
-		filterVideoData(value);
-	});
-}
-
-let currentNodeVideoUrl = '';
-function findVideoUrl(data) {
-	if (typeof data !== 'object' || data === null)
-		return;
-	if (data.video_url)
-		currentNodeVideoUrl = data.video_url;
-	Object.entries(data).forEach(([key, value]) => {
-		findVideoUrl(value);
-	});
-}
-
-fetchAdditionalData().then(data => {
-	console.log(videoData);
-	return filterVideoData(data);
-	console.log(data);
-}).then(() => {console.log(videoData)});
-
+loadBulkDownloadUI();
 window.addEventListener('message', function(event) {
 	if (event.data && event.data.type === 'videoData')
 		videoData = videoData.concat(event.data.videoData);
