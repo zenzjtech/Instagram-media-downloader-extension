@@ -1,7 +1,7 @@
 import { TOPRIGHT_NAV_CLASSNAME,
 	IDFI_BUTTON_DOWNLOAD_ALL
 } from '../constants';
-require('bootstrap');
+import('bootstrap');
 import $ from 'jquery';
 
 export function loadBulkDownloadUI() {
@@ -33,9 +33,28 @@ export function loadBulkDownloadUI() {
 			
 			topRightNav.appendChild(container);
 			
-			container.onclick = function() {
-			
-			}
+			container.onclick = handleClick;
 		}, 500)
 	})
+}
+
+const popupHtml = `
+<div class="card text-center">
+  <div class="card-header">
+    Featured
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Special title treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+  <div class="card-footer text-muted">
+    2 days ago
+  </div>
+</div>`;
+
+function handleClick(event) {
+	const container = document.createElement('div');
+	container.innerHTML = popupHtml;
+	this.after(container);
 }
