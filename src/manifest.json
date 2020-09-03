@@ -26,7 +26,7 @@
     {
       "matches": ["*://*.instagram.com/*"],
       "js": ["contentScript.bundle.js"],
-      "css": ["inject.css"],
+      "css": ["asset/css/inject.css", "asset/css/bootstrap.min.css"],
       "runAt": "document_end"
     }
   ],

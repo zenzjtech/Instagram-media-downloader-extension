@@ -79,9 +79,8 @@ var options = {
       }
     }]),
     new CopyWebpackPlugin([{
-      from: 'src/css/inject.css',
-      to: 'inject.css',
-      toType: 'file'
+      from: 'src/css/public',
+      to: 'asset/css'
     }]),
     new CopyWebpackPlugin([{
       from: 'src/js/content-scripts/captureXHRResponse.js',
