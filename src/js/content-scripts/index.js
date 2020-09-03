@@ -7,11 +7,10 @@ import { fetchAdditionalData, fetchSingleNodeData } from '../utils/';
 require('./inject');
 require('./bulkdownload')
 
-var oldHref = document.location.href;
+let oldHref = document.location.href;
 const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
 
 const icon = chrome.runtime.getURL('asset/img/download.png');
-
 const getHighestResolutionImg = image => {
 	if (image.srcset) {
 		const imgset = image.srcset.split(',');
@@ -36,6 +35,39 @@ function getVideoOrImageSrc(media) {
 		return found.video_url;
 	// Else this is an image
 	return getHighestResolutionImg(media);
+}
+
+async function getMediaSrc(node) {
+	const containerNode = node.parentElement.parentElement;
+	// If this node is in IGTV
+	if (node.className === IGTV_CLASSNAME_IDENTIFIER) {
+		const data = await loadingWrapper(
+			fetchSingleNodeData,
+			containerNode,
+			containerNode.href
+		);
+		currentNodeVideoUrl = '';
+		findVideoUrl(data);
+		console.log(currentNodeVideoUrl, data);
+		return currentNodeVideoUrl;
+	}
+	if (node.className === TAGGED_CLASSNAME_IDENTIFIED) {
+		const isVideo = containerNode.parentElement.querySelector('[aria-label="Video"]') !== null;
+		if (isVideo) {
+			const data = await loadingWrapper(
+				fetchSingleNodeData,
+				containerNode.parentElement,
+				containerNode.parentElement.href
+			);
+			currentNodeVideoUrl = '';
+			findVideoUrl(data);
+			console.log(currentNodeVideoUrl, data);
+			return currentNodeVideoUrl;
+		}
+	}
+	// Homepage or feed
+	const src = getVideoOrImageSrc(node);
+	return src;
 }
 
 const clean = function () {
@@ -78,39 +110,6 @@ function getMediaNode() {
 	const igtvVideos = Array.from(document.getElementsByClassName(IGTV_CLASSNAME_IDENTIFIER));
 	const videoAndImage = images.concat(videos).concat(igtvVideos);
 	return videoAndImage;
-}
-
-async function getMediaSrc(node) {
-	const containerNode = node.parentElement.parentElement;
-	// If this node is in IGTV
-	if (node.className === IGTV_CLASSNAME_IDENTIFIER) {
-		const data = await loadingWrapper(
-			fetchSingleNodeData,
-			containerNode,
-			containerNode.href
-		);
-		currentNodeVideoUrl = '';
-		findVideoUrl(data);
-		console.log(currentNodeVideoUrl, data);
-		return currentNodeVideoUrl;
-	}
-	if (node.className === TAGGED_CLASSNAME_IDENTIFIED) {
-		const isVideo = containerNode.parentElement.querySelector('[aria-label="Video"]') !== null;
-		if (isVideo) {
-			const data = await loadingWrapper(
-				fetchSingleNodeData,
-				containerNode.parentElement,
-				containerNode.parentElement.href
-			);
-			currentNodeVideoUrl = '';
-			findVideoUrl(data);
-			console.log(currentNodeVideoUrl, data);
-			return currentNodeVideoUrl;
-		}
-	}
-	// Homepage or feed
-	const src = getVideoOrImageSrc(node);
-	return src;
 }
 
 function createButton(media) {
