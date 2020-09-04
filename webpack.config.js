@@ -65,6 +65,7 @@ var options = {
   plugins: [
     // clean the build folder
     new CleanWebpackPlugin(),
+    new WriteFilePlugin(),
     // expose and write the allowed env vars on the compiled bundle
     new webpack.EnvironmentPlugin(["NODE_ENV"]),
     new CopyWebpackPlugin([{
@@ -104,8 +105,7 @@ var options = {
       template: path.join(__dirname, "src", "options.html"),
       filename: "options.html",
       chunks: ["options"]
-    }),
-    new WriteFilePlugin()
+    })
   ]
 };
 
