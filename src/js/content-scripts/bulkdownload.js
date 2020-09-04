@@ -1,7 +1,6 @@
 import {
 	TOPRIGHT_NAV_CLASSNAME,
-	IDFI_BUTTON_DOWNLOAD_ALL,
-	DOWNLOAD_ALL_MODAL_CLASSNAME, MSG_DOWNLOAD_FILE
+	DOWNLOAD_ALL_MODAL_CLASSNAME, MSG_DOWNLOAD_FILE, IDFI_BUTTON, IDFI_BUTTON_DOWNLOAD_ALL
 } from '../constants'
 import $ from 'jquery';
 import {getVideoOrImageSrc} from '../utils'
@@ -17,7 +16,7 @@ export function loadBulkDownloadUI() {
 			}
 			const topRightNav = document.getElementsByClassName(TOPRIGHT_NAV_CLASSNAME)[0];
 			// Check if the btn already exists
-			let container = topRightNav.querySelector(`[type="${IDFI_BUTTON_DOWNLOAD_ALL}"]`);
+			let container = topRightNav.querySelector(`[name="${IDFI_BUTTON_DOWNLOAD_ALL}"]`);
 			if (container)
 				return;
 			
@@ -25,14 +24,12 @@ export function loadBulkDownloadUI() {
 			const img = document.createElement('div');
 			img.style.backgroundImage = `url(${bulkDownloadIconPath})`;
 			img.className = 'download-all';
+			img.setAttribute('type', IDFI_BUTTON);
 			
 			container = document.createElement('div');
 			container.className = topRightNav.firstElementChild.className;
-			container.setAttribute('title', 'Click to bulk download')
-			container.setAttribute('type', IDFI_BUTTON_DOWNLOAD_ALL);
-			container.setAttribute('data-toggle', 'tooltip');
-			container.setAttribute('data-placement', 'right');
-			
+			container.setAttribute('type', IDFI_BUTTON);
+			container.setAttribute('name', IDFI_BUTTON_DOWNLOAD_ALL);
 			
 			container.appendChild(img);
 			topRightNav.appendChild(container);
@@ -81,7 +78,7 @@ function createDownloadAllPopup(currentElement) {
 	
 	popupContainer = document.createElement('div');
 	popupContainer.className = DOWNLOAD_ALL_MODAL_CLASSNAME;
-	popupContainer.setAttribute('type', IDFI_BUTTON_DOWNLOAD_ALL);
+	popupContainer.setAttribute('type', IDFI_BUTTON);
 	currentElement.after(popupContainer);
 	return popupContainer;
 }

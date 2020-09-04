@@ -1,9 +1,10 @@
 import "../css/popup.css";
-import Greeting from "js/popup/index";
+import Popup from "js/popup/index";
 import React from "react";
 import { render } from "react-dom";
+require('chrome-extension-async');
 
 render(
-  <Greeting/>,
+  <Popup/>,
   window.document.getElementById("app-container")
 );

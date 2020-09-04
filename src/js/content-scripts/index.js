@@ -1,8 +1,11 @@
-import { MSG_DOWNLOAD_FILE, IGTV_CLASSNAME_IDENTIFIER,
+require('chrome-extension-async');
+
+import {
+	MSG_DOWNLOAD_FILE, IGTV_CLASSNAME_IDENTIFIER,
 	TAGGED_CLASSNAME_IDENTIFIED,
 	LOADER_CLASSNAME,
-	IDFI_BUTTON
-} from '../constants';
+	IDFI_BUTTON, KEY_APP_STATE
+} from '../constants'
 import { fetchAdditionalData,
 	fetchSingleNodeData,
 	getVideoOrImageSrc
@@ -12,6 +15,7 @@ require('./inject');
 
 let oldHref = document.location.href;
 let videoData = [];
+let appState = true;
 const icon = chrome.runtime.getURL('asset/img/download.png');
 const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
 
@@ -54,6 +58,13 @@ const clean = function () {
 	}
 };
 
+const setUiVisible = (show = true) => {
+	const elements = document.querySelectorAll(`[type='${IDFI_BUTTON}']`);
+	elements.forEach(element => {
+		element.style.visibility = show ? 'visible' : 'hidden';
+	})
+}
+
 function handleUrlChange() {
 	loadBulkDownloadUI();
 	oldHref = document.location.href;
@@ -76,6 +87,8 @@ const observer = new MutationObserver(function (m) {
 					const type = tmp.getAttribute("type");
 					if (!type || (type && type.indexOf(IDFI_BUTTON) === -1))
 						action(true);
+					if (type && type.indexOf(IDFI_BUTTON) !== -1)
+							tmp.style.visibility = appState ? 'visible' : 'hidden';
 				}
 			}
 		}
@@ -95,6 +108,7 @@ function formDownloadButton(media) {
 	media.setAttribute("button", IDFI_BUTTON);
 	/*  */
 	let button = document.createElement("span");
+	button.style.visibility = appState ? 'visible' : 'hidden';
 	button.setAttribute("type", IDFI_BUTTON);
 	button.setAttribute("class", IDFI_BUTTON);
 	button.setAttribute("title", "Download Image");
@@ -201,6 +215,9 @@ async function receiveNewVideoData(currentVideoData) {
 }
 
 async function process() {
+	const storageData = await chrome.storage.local.get({ [KEY_APP_STATE]: true});
+	appState = storageData[KEY_APP_STATE];
+	
 	videoData = await receiveNewVideoData(videoData)
 	load();
 	loadBulkDownloadUI();
@@ -209,6 +226,13 @@ async function process() {
 			videoData = videoData.concat(event.data.videoData);
 	});
 }
+
+chrome.storage.onChanged.addListener(function(changes, areaName) {
+	if (areaName === 'local' && changes[KEY_APP_STATE]) {
+		const state = changes[KEY_APP_STATE].newValue;
+		setUiVisible(state);
+	}
+})
 
 process();
 

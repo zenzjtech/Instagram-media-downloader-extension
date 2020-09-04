@@ -24,27 +24,21 @@ const useStyles = makeStyles({
     margin: '10px 0 14px 0'
   }
 })
-const GreetingComponent = props =>  {
+const Popup = props =>  {
   const [appState, setAppState] = useState(true);
+  
   useEffect(() => {
     (async () => {
-/*      const result = await chrome.storage.local.get({[KEY_APP_STATE] : true});
+      const result = await chrome.storage.local.get({[KEY_APP_STATE] : true});
       console.log(result);
       if (result[KEY_APP_STATE] !== undefined)
-        setAppState(result[KEY_APP_STATE]);*/
-      chrome.storage.local.get({[KEY_APP_STATE] : true}, function(result) {
-        console.log(result);
-        if (result[KEY_APP_STATE] !== undefined)
-          setAppState(result[KEY_APP_STATE]);
-      });
+        setAppState(result[KEY_APP_STATE]);
     })();
   }, [])
+  
   const handleChange = async () => {
-    chrome.storage.local.set({ [KEY_APP_STATE]: !appState}, function(result) {console.log(result)});
+    await chrome.storage.local.set({ [KEY_APP_STATE]: !appState});
     setAppState(!appState);
-    /*const result = await chrome.storage.local.set({ [KEY_APP_STATE]: appState});
-    console.log(result); */
-    
   };
   
   const classes = useStyles();
@@ -72,4 +66,4 @@ const GreetingComponent = props =>  {
   )
 };
 
-export default hot(module)(GreetingComponent)
+export default hot(module)(Popup)
