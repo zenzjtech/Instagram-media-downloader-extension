@@ -109,7 +109,7 @@ function handleDownloadAll() {
 function handleClick(event) {
 	const downloadAllPopup = createDownloadAllPopup(this);
 	downloadAllPopup.innerHTML = popupHtml(getDownloadedMedia().length);
-	downloadAllPopup.style.display = downloadAllPopup.style.display === 'none' ? 'block' : 'none';
+	downloadAllPopup.style.display = downloadAllPopup.style.display === 'block' ? 'none' : 'block';
 	document.getElementById('download-all-btn').onclick = handleDownloadAll;
 }
 
