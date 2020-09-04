@@ -33,8 +33,35 @@ const fetchSingleNodeData = async (url) => {
 	}
 }
 
+const getHighestResolutionImg = image => {
+	if (image.srcset) {
+		const imgset = image.srcset.split(',');
+		const lastImage = imgset[imgset.length - 1];
+		return lastImage.split(' ')[0];
+	}
+	return image && image.src ? image.src : '';
+}
+
+function getVideoOrImageSrc(media, videoData) {
+	// if this post is a video
+	if (media.tagName === 'VIDEO') {
+		if (media.src)
+			return media.src;
+		const source = media.querySelector('source');
+		return source ? source.src : '';
+	}
+	let src = media && media.src ? media.src : '';
+	// If this post is a reference to a video
+	const found = videoData.find(data => data.thumbnail_src === src);
+	if (found)
+		return found.video_url;
+	// Else this is an image
+	return getHighestResolutionImg(media);
+}
+
 module.exports = {
-	handleResponse,
+	getHighestResolutionImg,
 	fetchAdditionalData,
-	fetchSingleNodeData
+	fetchSingleNodeData,
+	getVideoOrImageSrc
 }

@@ -1,8 +1,10 @@
-import { TOPRIGHT_NAV_CLASSNAME,
+import {
+	TOPRIGHT_NAV_CLASSNAME,
 	IDFI_BUTTON_DOWNLOAD_ALL,
-	DOWNLOAD_ALL_MODAL_CLASSNAME
-} from '../constants';
+	DOWNLOAD_ALL_MODAL_CLASSNAME, MSG_DOWNLOAD_FILE
+} from '../constants'
 import $ from 'jquery';
+import {getVideoOrImageSrc} from '../utils'
 
 export function loadBulkDownloadUI() {
 	let counter = 0;
@@ -50,21 +52,21 @@ const popupHtml = (noMedia = 0) => `
     flex-direction: column;
     align-items: center;"
     >
-    <h5 class="card-title">${noMedia} posts found in this page</h5>
+    <h5 class="card-title"><strong>${noMedia}</strong> posts found in this page</h5>
     <p class="card-text">Click below to download all of them.</p>
-    <a href="#" class="btn btn-primary"
+    <button id="download-all-btn" class="btn btn-primary"
     style="color: white;border-radius: 50px;
     margin-top: 15px;
     color: white;
     width: 50%;
     font-size: 95%;
     background-color: rgb(56, 151, 240);"
-    >Download all</a>
+    >Download all</button>
   </div>
   <div class="card-footer">
 <button
 type="button" class="close" aria-label="Close"
-onclick="this.parentElement.parentElement.style.display='none'"
+onclick="this.parentElement.parentElement.parentElement.style.display='none'"
 >
   <span aria-hidden="true" style="float: right" class="text-danger">&times;</span>
 </button>
@@ -80,11 +82,34 @@ function createDownloadAllPopup(currentElement) {
 	popupContainer = document.createElement('div');
 	popupContainer.className = DOWNLOAD_ALL_MODAL_CLASSNAME;
 	popupContainer.setAttribute('type', IDFI_BUTTON_DOWNLOAD_ALL);
-	popupContainer.innerHTML = popupHtml();
 	currentElement.after(popupContainer);
 	return popupContainer;
 }
+
+function getDownloadedMedia() {
+	return Array.from(document.getElementsByTagName('img'))
+		.filter(media => media.srcset !== '' && media.alt !== 'Instagram');
+}
+
+function handleDownloadAll() {
+	const downloadedMedia = getDownloadedMedia();
+	downloadedMedia.forEach(media => {
+		const src = getVideoOrImageSrc(media, []);
+		if (src) {
+			chrome.runtime.sendMessage({
+				type: MSG_DOWNLOAD_FILE,
+				payload: src
+			}, function (response) {
+				console.log(response);
+			})
+		}
+	})
+}
+
 function handleClick(event) {
 	const downloadAllPopup = createDownloadAllPopup(this);
+	downloadAllPopup.innerHTML = popupHtml(getDownloadedMedia().length);
 	downloadAllPopup.style.display = downloadAllPopup.style.display === 'none' ? 'block' : 'none';
+	document.getElementById('download-all-btn').onclick = handleDownloadAll;
 }
+

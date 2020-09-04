@@ -3,7 +3,10 @@ import { MSG_DOWNLOAD_FILE, IGTV_CLASSNAME_IDENTIFIER,
 	LOADER_CLASSNAME,
 	IDFI_BUTTON
 } from '../constants';
-import { fetchAdditionalData, fetchSingleNodeData } from '../utils/';
+import { fetchAdditionalData,
+	fetchSingleNodeData,
+	getVideoOrImageSrc
+} from '../utils/';
 import { loadBulkDownloadUI } from './bulkdownload';
 require('./inject');
 
@@ -12,31 +15,6 @@ let videoData = [];
 const icon = chrome.runtime.getURL('asset/img/download.png');
 const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
 
-const getHighestResolutionImg = image => {
-	if (image.srcset) {
-		const imgset = image.srcset.split(',');
-		const lastImage = imgset[imgset.length - 1];
-		return lastImage.split(' ')[0];
-	}
-	return image && image.src ? image.src : '';
-}
-
-function getVideoOrImageSrc(media) {
-	// if this post is a video
-	if (media.tagName === 'VIDEO') {
-		if (media.src)
-			return media.src;
-		const source = media.querySelector('source');
-		return source ? source.src : '';
-	}
-	let src = media && media.src ? media.src : '';
-	// If this post is a reference to a video
-	const found = videoData.find(data => data.thumbnail_src === src);
-	if (found)
-		return found.video_url;
-	// Else this is an image
-	return getHighestResolutionImg(media);
-}
 
 async function getMediaSrc(node) {
 	const containerNode = node.parentElement.parentElement;
@@ -63,7 +41,7 @@ async function getMediaSrc(node) {
 		}
 	}
 	// Homepage or feed
-	const src = getVideoOrImageSrc(node);
+	const src = getVideoOrImageSrc(node, videoData);
 	return src;
 }
 
