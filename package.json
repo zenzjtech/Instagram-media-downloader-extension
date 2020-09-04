@@ -8,6 +8,7 @@
     "start": "node utils/webserver.js"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
     "react": "16.12.0",
