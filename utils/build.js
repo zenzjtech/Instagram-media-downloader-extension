@@ -1,9 +1,14 @@
 var webpack = require("webpack"),
-    config = require("../webpack.config");
+	CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin,
+	config = require("../webpack.config");
 
-delete config.chromeExtensionBoilerplate;
+
+config.plugins = [
+	// clean the build folder
+	new CleanWebpackPlugin(),
+].concat(config.plugins);
 
 webpack(
-  config,
-  function (err) { if (err) throw err; }
+	config,
+	function (err) { if (err) throw err; }
 );

@@ -2,7 +2,6 @@ var webpack = require("webpack"),
   path = require("path"),
   fileSystem = require("fs"),
   env = require("./utils/env"),
-  CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin,
   CopyWebpackPlugin = require("copy-webpack-plugin"),
   HtmlWebpackPlugin = require("html-webpack-plugin"),
   WriteFilePlugin = require("write-file-webpack-plugin");
@@ -65,8 +64,6 @@ var options = {
     modules: [path.resolve(__dirname, 'src'), 'node_modules'],
   },
   plugins: [
-    // clean the build folder
-    new CleanWebpackPlugin(),
     new WriteFilePlugin( {force: true}),
     // expose and write the allowed env vars on the compiled bundle
     new webpack.EnvironmentPlugin(["NODE_ENV"]),
