@@ -1,8 +1,9 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import Switch from '@material-ui/core/Switch'
 import { hot } from "react-hot-loader";
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import Typography from '@material-ui/core/Typography'
+import {KEY_APP_STATE} from '../constants'
 
 const useStyles = makeStyles({
   root: {
@@ -24,10 +25,28 @@ const useStyles = makeStyles({
   }
 })
 const GreetingComponent = props =>  {
-  const [appState, setAppState] = useState(false);
-  const handleChange = (event) => {
-    setAppState(!appState)
+  const [appState, setAppState] = useState(true);
+  useEffect(() => {
+    (async () => {
+/*      const result = await chrome.storage.local.get({[KEY_APP_STATE] : true});
+      console.log(result);
+      if (result[KEY_APP_STATE] !== undefined)
+        setAppState(result[KEY_APP_STATE]);*/
+      chrome.storage.local.get({[KEY_APP_STATE] : true}, function(result) {
+        console.log(result);
+        if (result[KEY_APP_STATE] !== undefined)
+          setAppState(result[KEY_APP_STATE]);
+      });
+    })();
+  }, [])
+  const handleChange = async () => {
+    chrome.storage.local.set({ [KEY_APP_STATE]: !appState}, function(result) {console.log(result)});
+    setAppState(!appState);
+    /*const result = await chrome.storage.local.set({ [KEY_APP_STATE]: appState});
+    console.log(result); */
+    
   };
+  
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -36,7 +55,6 @@ const GreetingComponent = props =>  {
           className={classes.switcher}
           checked={appState}
           onChange={handleChange}
-          name="checkedA"
           inputProps={{ 'aria-label': 'secondary checkbox' }}
         />
         <Typography
@@ -47,7 +65,7 @@ const GreetingComponent = props =>  {
         </Typography>
       </div>
       <Typography className={classes.footer} variant={'caption'}>
-        by <a href={'#'}>Your Company</a>
+        made by <a href={'#'}>Your Company</a>
       </Typography>
     </div>
     
