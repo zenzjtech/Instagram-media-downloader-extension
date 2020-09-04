@@ -5,10 +5,11 @@
   "scripts": {
     "build": "node utils/build.js",
     "buildz": "node utils/build.js && zip -r instagram-downloader-extension.zip build",
-    "start": "node utils/webserver.js"
+    "start": "webpack -w && node utils/webserver.js"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.0",
+    "chrome-extension-async": "^3.4.1",
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
     "react": "16.12.0",

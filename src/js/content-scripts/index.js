@@ -91,7 +91,7 @@ function getMediaNode() {
 	return videoAndImage;
 }
 
-function createButton(media) {
+function formDownloadButton(media) {
 	media.setAttribute("button", IDFI_BUTTON);
 	/*  */
 	let button = document.createElement("span");
@@ -121,7 +121,7 @@ function createButton(media) {
 	return button;
 }
 
-function createLoader() {
+function createDownloadLoader() {
 	let loader = document.createElement('div');
 	loader.innerHTML = '<div></div><div></div>';
 	loader.className = LOADER_CLASSNAME;
@@ -147,8 +147,8 @@ const action = function () {
 	videoAndImage.forEach(media => {
 		let button = media.getAttribute("button");
 		if (!button) {
-			button = createButton(media);
-			const loader = createLoader(media);
+			button = formDownloadButton(media);
+			const loader = createDownloadLoader(media);
 			/*  */
 			media.after(button);
 			button.after(loader);
@@ -200,12 +200,16 @@ async function receiveNewVideoData(currentVideoData) {
 	return [...currentVideoData].concat(newVideoData);
 }
 
-(async () => {
+async function process() {
 	videoData = await receiveNewVideoData(videoData)
-})();
-load();
-loadBulkDownloadUI();
-window.addEventListener('message', function(event) {
-	if (event.data && event.data.type === 'videoData')
-		videoData = videoData.concat(event.data.videoData);
-})
+	load();
+	loadBulkDownloadUI();
+	window.addEventListener('message', function(event) {
+		if (event.data && event.data.type === 'videoData')
+			videoData = videoData.concat(event.data.videoData);
+	});
+}
+
+process();
+
+

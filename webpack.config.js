@@ -20,14 +20,16 @@ if (fileSystem.existsSync(secretsPath)) {
 
 var options = {
   mode: process.env.NODE_ENV || "development",
+  devServer: {
+    // This is required for webpack-dev-server. The path should
+    // be an absolute path to your build destination.
+    writeToDisk: true
+  },
   entry: {
     popup: path.join(__dirname, "src", "js", "popup.js"),
     options: path.join(__dirname, "src", "js", "options.js"),
     background: path.join(__dirname, "src", "js", "background", "index.js"),
     contentScript: path.join(__dirname, "src", "js", "content-scripts", "index.js")
-  },
-  chromeExtensionBoilerplate: {
-    notHotReload: ["contentScript"]
   },
   output: {
     path: path.join(__dirname, "build"),
@@ -65,11 +67,11 @@ var options = {
   plugins: [
     // clean the build folder
     new CleanWebpackPlugin(),
-    new WriteFilePlugin(),
+    new WriteFilePlugin( {force: true}),
     // expose and write the allowed env vars on the compiled bundle
     new webpack.EnvironmentPlugin(["NODE_ENV"]),
     new CopyWebpackPlugin([{
-      from: "src/manifest.json",
+      from: path.join(__dirname, "src/manifest.json"),
       transform: function (content, path) {
         // generates the manifest file using the package.json informations
         return Buffer.from(JSON.stringify({
@@ -79,23 +81,25 @@ var options = {
         }))
       }
     }]),
-    new CopyWebpackPlugin([{
-      from: 'src/css/public',
-      to: 'asset/css'
-    }]),
-		new CopyWebpackPlugin([{
-			from: 'src/js/content-scripts/public',
-			to: 'asset/js'
-		}]),
-    new CopyWebpackPlugin([{
-      from: 'src/js/content-scripts/captureXHRResponse.js',
-      to: 'captureXHRResponse.js',
-      toType: 'file'
-    }]),
-    new CopyWebpackPlugin([{
-      from: 'src/img/public',
-      to: 'asset/img',
-    }]),
+    new CopyWebpackPlugin([
+      {
+        from: 'src/css/public',
+        to: 'asset/css'
+      },
+      {
+        from: 'src/js/content-scripts/public',
+        to: 'asset/js'
+      },
+      {
+        from: 'src/js/content-scripts/captureXHRResponse.js',
+        to: 'captureXHRResponse.js',
+        toType: 'file'
+      },
+      {
+        from: 'src/img/public',
+        to: 'asset/img',
+      }
+    ]),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "popup.html"),
       filename: "popup.html",
