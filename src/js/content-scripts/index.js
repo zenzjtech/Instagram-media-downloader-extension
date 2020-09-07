@@ -229,8 +229,8 @@ async function process() {
 
 chrome.storage.onChanged.addListener(function(changes, areaName) {
 	if (areaName === 'local' && changes[KEY_APP_STATE]) {
-		const state = changes[KEY_APP_STATE].newValue;
-		setUiVisible(state);
+		appState = changes[KEY_APP_STATE].newValue;
+		setUiVisible(appState);
 	}
 })
 
