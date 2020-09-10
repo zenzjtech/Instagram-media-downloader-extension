@@ -4,6 +4,7 @@ import {
 	MSG_DOWNLOAD_FILE, IGTV_CLASSNAME_IDENTIFIER,
 	TAGGED_CLASSNAME_IDENTIFIED,
 	LOADER_CLASSNAME,
+	IDFI_BUTTON_LOADER,
 	IDFI_BUTTON, KEY_APP_STATE
 } from '../constants'
 import { fetchAdditionalData,
@@ -16,7 +17,7 @@ require('./inject');
 let oldHref = document.location.href;
 let videoData = [];
 let appState = true;
-const icon = chrome.runtime.getURL('asset/img/download.png');
+const icon = chrome.runtime.getURL('asset/img/download_white.svg');
 const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
 
 
@@ -49,15 +50,6 @@ async function getMediaSrc(node) {
 	return src;
 }
 
-const clean = function () {
-	observer.disconnect();
-	/*  */
-	const elements = [...document.querySelectorAll(`span[class='${IDFI_BUTTON}']`)];
-	for (let i = 0; i < elements.length; i++) {
-		if (elements[i]) elements[i].remove();
-	}
-};
-
 const setUiVisible = (show = true) => {
 	const elements = document.querySelectorAll(`[type='${IDFI_BUTTON}']`);
 	elements.forEach(element => {
@@ -85,9 +77,11 @@ const observer = new MutationObserver(function (m) {
 				const tmp = mutation.addedNodes[j];
 				if (tmp.nodeType === Node.ELEMENT_NODE) {
 					const type = tmp.getAttribute("type");
-					if (!type || (type && type.indexOf(IDFI_BUTTON) === -1))
+					if (!type || (type && type.indexOf(IDFI_BUTTON) === -1)) {
 						action(true);
-					if (type && type.indexOf(IDFI_BUTTON) !== -1)
+						console.log(tmp);
+					}
+					if (type && type.indexOf(IDFI_BUTTON) !== -1 && type !== IDFI_BUTTON_LOADER)
 							tmp.style.visibility = appState ? 'visible' : 'hidden';
 				}
 			}
@@ -112,12 +106,12 @@ function formDownloadButton(media) {
 	button.setAttribute("type", IDFI_BUTTON);
 	button.setAttribute("class", IDFI_BUTTON);
 	button.setAttribute("title", "Download Image");
-	button.style.background = `#FFF no-repeat center center`;
+	button.style.background = `transparent no-repeat center center`;
 	button.style.backgroundImage = `url(${icon})`
-	button.style.backgroundSize = "16px";
+	button.style.backgroundSize = "30px";
 	/*  */
-	button.addEventListener("mouseenter", function () {this.style.opacity = "1.0"});
-	button.addEventListener("mouseleave", function () {this.style.opacity = "0.3"});
+	button.addEventListener("mouseenter", function () {this.style.opacity = "1.5"});
+	button.addEventListener("mouseleave", function () {this.style.opacity = "0.5"});
 	/*  */
 	button.addEventListener("click", async function (e) {
 		e.preventDefault();
@@ -139,6 +133,7 @@ function createDownloadLoader() {
 	let loader = document.createElement('div');
 	loader.innerHTML = '<div></div><div></div>';
 	loader.className = LOADER_CLASSNAME;
+	loader.setAttribute('type', IDFI_BUTTON_LOADER)
 	return loader;
 }
 

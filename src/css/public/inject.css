@@ -1,19 +1,19 @@
 .IDFI-BUTTON {
     opacity: 0.3;
     border: 0 !important;
-    margin: 3px !important;
-    width: 24px !important;
+    margin: 5px !important;
+    width: 32px !important;
     color: #333 !important;
-    height: 24px !important;
-    padding: 3px !important;
+    height: 32px !important;
+    padding: 5px !important;
     display: block !important;
     cursor: pointer !important;
-    font-size: 22px !important;
+    font-size: 32px !important;
     font-weight: bold !important;
-    line-height: 22px !important;
+    line-height: 32px !important;
     text-align: center !important;
     position: absolute !important;
-    border-radius: 32px !important;
+    border-radius: 50px !important;
     z-index: 99999999999999999 !important;
     transition: 300ms ease all !important;
     -moz-transition: 300ms ease all !important;
