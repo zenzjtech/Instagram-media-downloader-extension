@@ -1,24 +1,22 @@
-import React from 'react';
+import React, {useEffect} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
-import CardHeader from '@material-ui/core/CardHeader'
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
 import icon from 'img/icon-34.png';
-import CardActionArea from '@material-ui/core/CardActionArea'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
-import InputLabel from '@material-ui/core/InputLabel'
 import Select from '@material-ui/core/Select'
 import Radio from '@material-ui/core/Radio'
 import FormLabel from '@material-ui/core/FormLabel'
 import RadioGroup from '@material-ui/core/RadioGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Grid from '@material-ui/core/Grid'
+require('chrome-extension-async');
+
+import { KEY_APP_IMAGE_RESOLUTION, KEY_APP_ICON_POSITION } from 'js/constants';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -52,6 +50,27 @@ export default function Option() {
 	const classes = useStyles();
 	const [resolution, setResolution] = React.useState(3);
 	const [iconPosition, setIconPosition] = React.useState('under');
+	
+	useEffect(() => {
+		(async function(){
+			const result = await chrome.storage.sync.get([
+				KEY_APP_IMAGE_RESOLUTION, KEY_APP_ICON_POSITION
+			]);
+			if (result[KEY_APP_ICON_POSITION])
+				setIconPosition(result[KEY_APP_ICON_POSITION]);
+			if (result[KEY_APP_IMAGE_RESOLUTION])
+				setResolution(result[KEY_APP_IMAGE_RESOLUTION]);
+		})();
+	}, [])
+	
+	useEffect(() => {
+		(async function() {
+			await chrome.storage.sync.set({
+				[KEY_APP_ICON_POSITION]: iconPosition,
+				[KEY_APP_IMAGE_RESOLUTION]: resolution
+			})
+		})()
+	}, [iconPosition, resolution]);
 	
 	const handleChange = (event) => {
 		setResolution(event.target.value);

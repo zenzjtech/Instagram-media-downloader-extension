@@ -8,5 +8,7 @@ module.exports = {
 	IDFI_BUTTON_DOWNLOAD_ALL: 'IDFI-BUTTON-DL-ALL',
 	TOPRIGHT_NAV_CLASSNAME: '_47KiJ',
 	TOPRIGHT_NAV_ELEMENT_CLASSNAME: 'Fifk5',
-	KEY_APP_STATE: 'mdfi-app-state'
+	KEY_APP_STATE: 'mdfi-app-state',
+	KEY_APP_IMAGE_RESOLUTION: 'image-resolution',
+	KEY_APP_ICON_POSITION: 'icon-position',
 }
