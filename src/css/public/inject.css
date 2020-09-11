@@ -20,6 +20,30 @@
     -webkit-transition: 300ms ease all !important;
 }
 
+.top-left {
+    top: 0px;
+    left: 0px;
+}
+
+.top-right {
+    top: 0px;
+    right: 0px
+}
+
+.bottom-left {
+    bottom: 0px;
+    left: 0px
+}
+
+.bottom-right {
+    bottom: 0px;
+    right: 0px
+}
+
+.under-image {
+
+}
+
 .lds-ripple {
     display: inline-block;
     position: absolute;

@@ -51,7 +51,8 @@ async function getMediaSrc(node) {
 }
 
 const setUiVisible = (show = true) => {
-	const elements = document.querySelectorAll(`[type='${IDFI_BUTTON}']`);
+	let elements = document.querySelectorAll(`[type='${IDFI_BUTTON}']`);
+	elements = Array.from(elements).filter(element => element.getAttribute("name") !== IDFI_BUTTON_LOADER)
 	elements.forEach(element => {
 		element.style.visibility = show ? 'visible' : 'hidden';
 	})
@@ -77,11 +78,12 @@ const observer = new MutationObserver(function (m) {
 				const tmp = mutation.addedNodes[j];
 				if (tmp.nodeType === Node.ELEMENT_NODE) {
 					const type = tmp.getAttribute("type");
+					const name = tmp.getAttribute("name");
 					if (!type || (type && type.indexOf(IDFI_BUTTON) === -1)) {
 						action(true);
 						console.log(tmp);
 					}
-					if (type && type.indexOf(IDFI_BUTTON) !== -1 && type !== IDFI_BUTTON_LOADER)
+					if (type && type.indexOf(IDFI_BUTTON) !== -1 && name !== IDFI_BUTTON_LOADER)
 							tmp.style.visibility = appState ? 'visible' : 'hidden';
 				}
 			}
@@ -105,7 +107,7 @@ function formDownloadButton(media) {
 	button.style.visibility = appState ? 'visible' : 'hidden';
 	button.setAttribute("type", IDFI_BUTTON);
 	button.setAttribute("class", IDFI_BUTTON);
-	button.setAttribute("title", "Download Image");
+	button.setAttribute("title", "Download Media");
 	button.style.background = `transparent no-repeat center center`;
 	button.style.backgroundImage = `url(${icon})`
 	button.style.backgroundSize = "30px";
@@ -133,7 +135,8 @@ function createDownloadLoader() {
 	let loader = document.createElement('div');
 	loader.innerHTML = '<div></div><div></div>';
 	loader.className = LOADER_CLASSNAME;
-	loader.setAttribute('type', IDFI_BUTTON_LOADER)
+	loader.setAttribute("name", IDFI_BUTTON_LOADER);
+	loader.setAttribute('type', IDFI_BUTTON)
 	return loader;
 }
 
