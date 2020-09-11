@@ -5,19 +5,22 @@ import {
 	TAGGED_CLASSNAME_IDENTIFIED,
 	LOADER_CLASSNAME,
 	IDFI_BUTTON_LOADER,
-	IDFI_BUTTON, KEY_APP_STATE
+	IDFI_BUTTON, KEY_APP_STATE,
+	FAVORITE_BUTTON_CLASSNAME, IDFI_BUTTON_UNDER
 } from '../constants'
 import { fetchAdditionalData,
 	fetchSingleNodeData,
 	getVideoOrImageSrc
 } from '../utils/';
 import { loadBulkDownloadUI } from './bulkdownload';
+import { isInstPost } from './helper';
 require('./inject');
 
 let oldHref = document.location.href;
 let videoData = [];
 let appState = true;
 const icon = chrome.runtime.getURL('asset/img/download_white.svg');
+const iconBlack = chrome.runtime.getURL('asset/img/download_black.svg');
 const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
 
 
@@ -100,26 +103,29 @@ function getMediaNode() {
 	return videoAndImage;
 }
 
-function formDownloadButton(media) {
+function createDownloadButton({ media, dlIcon, mouseEnterOp, mouseLeaveOp, btnClass }) {
 	media.setAttribute("button", IDFI_BUTTON);
 	/*  */
 	let button = document.createElement("span");
-	button.style.visibility = appState ? 'visible' : 'hidden';
 	button.setAttribute("type", IDFI_BUTTON);
-	button.setAttribute("class", IDFI_BUTTON);
+	button.setAttribute("class", btnClass);
 	button.setAttribute("title", "Download Media");
 	button.style.background = `transparent no-repeat center center`;
-	button.style.backgroundImage = `url(${icon})`
-	button.style.backgroundSize = "30px";
+	button.style.backgroundImage = `url(${dlIcon})`
+	button.style.backgroundSize = "35px";
 	/*  */
-	button.addEventListener("mouseenter", function () {this.style.opacity = "1.5"});
-	button.addEventListener("mouseleave", function () {this.style.opacity = "0.5"});
+	button.addEventListener("mouseenter", function () {
+		this.style.opacity = mouseEnterOp
+	});
+	button.addEventListener("mouseleave", function () {
+		this.style.opacity = mouseLeaveOp
+	});
 	/*  */
 	button.addEventListener("click", async function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		/*  */
-		const src = await getMediaSrc(this.previousElementSibling);
+		const src = await getMediaSrc(media);
 		if (src)
 			chrome.runtime.sendMessage({
 				type: MSG_DOWNLOAD_FILE,
@@ -154,17 +160,62 @@ async function loadingWrapper(func, node, args) {
 	return result;
 }
 
+
+/**
+ * Find the commmont <article> tag of current image and its functional buttons.
+ * @param node
+ */
+function getFavoriteButton(node) {
+	while (node.parentElement) {
+		const favoriteButton = node.querySelector(`[class="${FAVORITE_BUTTON_CLASSNAME}"]`)
+		if (favoriteButton) {
+			return favoriteButton;
+		}
+		node = node.parentElement;
+	}
+	return null;
+}
+
 const action = function () {
 	const videoAndImage = getMediaNode();
-	videoAndImage.forEach(media => {
-		let button = media.getAttribute("button");
-		if (!button) {
-			button = formDownloadButton(media);
-			const loader = createDownloadLoader(media);
-			/*  */
-			media.after(button);
-			button.after(loader);
-			media.parentNode.style.display = "flex";
+	videoAndImage.forEach(mediaNode => {
+		// Insert Download Button within the image/video
+		let downloadButton = mediaNode.getAttribute("button");
+		if (!downloadButton) {
+			downloadButton = createDownloadButton({
+				media: mediaNode,
+				dlIcon: icon,
+				mouseLeaveOp: '0.3',
+				mouseEnterOp: '1.0',
+				btnClass: IDFI_BUTTON
+			});
+			let loader = createDownloadLoader(mediaNode);
+			mediaNode.after(downloadButton);
+			downloadButton.after(loader);
+			
+			mediaNode.parentNode.style.display = "flex";
+		}
+		
+		// Insert Download Button under the image/video
+		// This media must be an Instagram post, and only consider in news feed
+		if (!isInstPost(mediaNode) || location.pathname !== '/')
+			return;
+		const favoriteButtonContainer = getFavoriteButton(mediaNode);
+		if (!favoriteButtonContainer)
+			return;
+		downloadButton = favoriteButtonContainer.getAttribute("button");
+		if (!downloadButton) {
+			downloadButton = createDownloadButton({
+				media: mediaNode,
+				dlIcon: iconBlack,
+				mouseEnterOp: '0.7',
+				mouseLeaveOp: '1.0',
+				btnClass: IDFI_BUTTON_UNDER
+			});
+			let loader = createDownloadLoader(mediaNode);
+			favoriteButtonContainer.setAttribute('button', IDFI_BUTTON);
+			favoriteButtonContainer.insertBefore(downloadButton, favoriteButtonContainer.childNodes[0]);
+			downloadButton.after(loader);
 		}
 	})
 };

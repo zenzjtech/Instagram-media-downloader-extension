@@ -20,6 +20,17 @@
     -webkit-transition: 300ms ease all !important;
 }
 
+.IDFI-BUTTON-UNDER {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin-top: -2px;
+}
+.wmtNn {
+    display: flex !important;
+}
 .top-left {
     top: 0px;
     left: 0px;

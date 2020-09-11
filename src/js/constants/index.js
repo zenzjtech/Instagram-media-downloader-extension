@@ -1,10 +1,11 @@
 module.exports = {
-	MSG_DOWNLOAD_FILE: 'download.this.file.please!',
+	MSG_DOWNLOAD_FILE: 'download_black.svg.this.file.please!',
 	IGTV_CLASSNAME_IDENTIFIER: 'lVhHa RNL1l',
 	TAGGED_CLASSNAME_IDENTIFIED: 'FFVAD',
 	LOADER_CLASSNAME: 'lds-ripple',
 	DOWNLOAD_ALL_MODAL_CLASSNAME: 'download-all-modal',
 	IDFI_BUTTON: 'IDFI-BUTTON',
+	IDFI_BUTTON_UNDER: 'IDFI-BUTTON-UNDER',
 	IDFI_BUTTON_LOADER: 'IDFI-BUTTON-LOADER',
 	IDFI_BUTTON_DOWNLOAD_ALL: 'IDFI-BUTTON-DL-ALL',
 	TOPRIGHT_NAV_CLASSNAME: '_47KiJ',
@@ -12,4 +13,5 @@ module.exports = {
 	KEY_APP_STATE: 'mdfi-app-state',
 	KEY_APP_IMAGE_RESOLUTION: 'image-resolution',
 	KEY_APP_ICON_POSITION: 'icon-position',
+	FAVORITE_BUTTON_CLASSNAME: 'wmtNn'
 }

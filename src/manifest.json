@@ -7,7 +7,7 @@
   },
   "permissions": [
     "webRequest",
-    "*://*.instagram.com/",
+    "*://*.instagram.com/*",
     "downloads",
     "storage"
   ],
