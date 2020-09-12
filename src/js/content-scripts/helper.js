@@ -88,7 +88,7 @@ export function createDownloadButton(
 	return button;
 }
 
-async function getMediaSrc(node, videoData) {
+export async function getMediaSrc(node, videoData) {
 	const containerNode = node.parentElement.parentElement;
 	// If this node is in IGTV
 	if (node.className === IGTV_CLASSNAME_IDENTIFIER) {
@@ -201,7 +201,7 @@ const getHighestResolutionImg = image => {
 	return image && image.src ? image.src : '';
 }
 
-function getMediaSrcAtHomePageOrFeed(media, videoData) {
+export function getMediaSrcAtHomePageOrFeed(media, videoData) {
 	// if this post is a video
 	if (media.tagName === 'VIDEO') {
 		if (media.src)

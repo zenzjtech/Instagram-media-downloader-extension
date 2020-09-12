@@ -3,7 +3,7 @@ import {
 	DOWNLOAD_ALL_MODAL_CLASSNAME, MSG_DOWNLOAD_FILE, IDFI_BUTTON, IDFI_BUTTON_DOWNLOAD_ALL
 } from '../constants'
 import $ from 'jquery';
-import {getVideoOrImageSrc} from '../utils'
+import {getMediaSrcAtHomePageOrFeed} from './helper'
 
 export function loadBulkDownloadUI() {
 	let counter = 0;
@@ -93,7 +93,7 @@ function getDownloadedMedia() {
 function handleDownloadAll() {
 	const downloadedMedia = getDownloadedMedia();
 	downloadedMedia.forEach(media => {
-		const src = getVideoOrImageSrc(media, []);
+		const src = getMediaSrcAtHomePageOrFeed(media, []);
 		if (src) {
 			chrome.runtime.sendMessage({
 				type: MSG_DOWNLOAD_FILE,
