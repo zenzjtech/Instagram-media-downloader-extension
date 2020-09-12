@@ -14,5 +14,5 @@ module.exports = {
 	KEY_APP_IMAGE_RESOLUTION: 'image-resolution',
 	KEY_APP_ICON_POSITION: 'icon-position',
 	FAVORITE_BUTTON_CLASSNAME: 'wmtNn',
-	STORY_THUMBNAIL_CLASSNAME: '_6q-tv'
+	STORY_CONTAINER_CLASSNAME: 'ku8Bn '
 }

@@ -9,7 +9,7 @@ import { IGTV_CLASSNAME_IDENTIFIER,
 	LOADER_CLASSNAME,
 	TAGGED_CLASSNAME_IDENTIFIED,
 	FAVORITE_BUTTON_CLASSNAME,
-	STORY_THUMBNAIL_CLASSNAME
+	STORY_CONTAINER_CLASSNAME
 } from '../constants';
 
 export function isInstPost(mediaNode) {
@@ -26,15 +26,28 @@ export function createDownloadLoader() {
 }
 
 
+function hasParentWithClassName(node, className) {
+	if (!node)
+		return false;
+	if (node.className.includes(className))
+		return true;
+	return hasParentWithClassName(node.parentElement, className);
+}
+
 export function getMediaNode() {
+
 	const images = Array.from(document.querySelectorAll("img"));
 	const videos = Array.from(document.querySelectorAll('video'));
 	// IGTV video
 	const igtvVideos = Array.from(document.getElementsByClassName(IGTV_CLASSNAME_IDENTIFIER));
 	let mediaNodes = images.concat(videos).concat(igtvVideos);
 	
-	// exlcuding stories
-	mediaNodes = mediaNodes.filter(node => node.className !== STORY_THUMBNAIL_CLASSNAME);
+	
+	mediaNodes = mediaNodes
+		.filter(node => !hasParentWithClassName(node, STORY_CONTAINER_CLASSNAME)) // exclude stories
+		.filter(node => !(node.src && !node.src.startsWith('http'))) // exclude invalid url
+		.filter(node => node.alt !== 'Instagram')
+		.filter( node => node.className !== 'ZIm78')
 	return mediaNodes;
 }
 
@@ -180,7 +193,10 @@ const getHighestResolutionImg = image => {
 	if (image.srcset) {
 		const imgset = image.srcset.split(',');
 		const lastImage = imgset[imgset.length - 1];
-		return lastImage.split(' ')[0];
+		let result = lastImage.split(' ')[0];
+		if (!result.startsWith('http'))
+			result = 'https://instagram.com' + result;
+		return result;
 	}
 	return image && image.src ? image.src : '';
 }

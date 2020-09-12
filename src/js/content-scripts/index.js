@@ -71,7 +71,7 @@ const action = function () {
 		if (!downloadButton) {
 			downloadButton = createDownloadButton({
 				media: mediaNode,
-				dlIcon: icon,
+				dlIcon: iconBlack,
 				mouseLeaveOp: '0.3',
 				mouseEnterOp: '1.0',
 				btnClass: IDFI_BUTTON,
