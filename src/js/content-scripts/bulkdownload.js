@@ -15,6 +15,8 @@ export function loadBulkDownloadUI() {
 				return;
 			}
 			const topRightNav = document.getElementsByClassName(TOPRIGHT_NAV_CLASSNAME)[0];
+			if (!topRightNav)
+				return;
 			// Check if the btn already exists
 			let container = topRightNav.querySelector(`[name="${IDFI_BUTTON_DOWNLOAD_ALL}"]`);
 			if (container)

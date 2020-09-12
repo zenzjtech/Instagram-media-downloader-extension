@@ -1,4 +1,5 @@
 require('chrome-extension-async');
+require('./inject');
 
 import {
 	IDFI_BUTTON_LOADER,
@@ -13,7 +14,6 @@ import { isInstPost,
 	getFavoriteButton,
 	receiveNewVideoData
 } from './helper';
-require('./inject');
 
 let oldHref = document.location.href;
 let videoData = [];
@@ -21,7 +21,7 @@ let appState = true;
 const icon = chrome.runtime.getURL('asset/img/download_white.svg');
 const iconBlack = chrome.runtime.getURL('asset/img/download_black.svg');
 
-const load = function () {observer.observe(document.body, {"childList": true, "subtree": true})};
+const load = function (appState) {observer.observe(document.body, {"childList": true, "subtree": true})};
 
 const setUiVisible = (show = true) => {
 	let elements = document.querySelectorAll(`[type='${IDFI_BUTTON}']`);
@@ -54,7 +54,6 @@ const observer = new MutationObserver(function (m) {
 					const name = tmp.getAttribute("name");
 					if (!type || (type && type.indexOf(IDFI_BUTTON) === -1)) {
 						action(true);
-						console.log(tmp);
 					}
 					if (type && type.indexOf(IDFI_BUTTON) !== -1 && name !== IDFI_BUTTON_LOADER)
 							tmp.style.visibility = appState ? 'visible' : 'hidden';
@@ -75,7 +74,8 @@ const action = function () {
 				dlIcon: icon,
 				mouseLeaveOp: '0.3',
 				mouseEnterOp: '1.0',
-				btnClass: IDFI_BUTTON
+				btnClass: IDFI_BUTTON,
+				videoData
 			});
 			let loader = createDownloadLoader(mediaNode);
 			mediaNode.after(downloadButton);
@@ -113,7 +113,7 @@ async function process() {
 	appState = storageData[KEY_APP_STATE];
 	
 	videoData = await receiveNewVideoData(videoData)
-	load();
+	load(appState);
 	loadBulkDownloadUI();
 	window.addEventListener('message', function(event) {
 		if (event.data && event.data.type === 'videoData')

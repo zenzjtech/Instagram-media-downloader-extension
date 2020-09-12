@@ -34,7 +34,10 @@ export function getMediaNode() {
 	return videoAndImage;
 }
 
-export function createDownloadButton({ media, dlIcon, mouseEnterOp, mouseLeaveOp, btnClass }) {
+export function createDownloadButton(
+	{
+		media, dlIcon, mouseEnterOp, mouseLeaveOp, btnClass, videoData
+	}) {
 	media.setAttribute("button", IDFI_BUTTON);
 	/*  */
 	let button = document.createElement("span");
@@ -68,7 +71,7 @@ export function createDownloadButton({ media, dlIcon, mouseEnterOp, mouseLeaveOp
 	return button;
 }
 
-async function getMediaSrc(node) {
+async function getMediaSrc(node, videoData) {
 	const containerNode = node.parentElement.parentElement;
 	// If this node is in IGTV
 	if (node.className === IGTV_CLASSNAME_IDENTIFIER) {
