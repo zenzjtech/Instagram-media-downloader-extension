@@ -71,7 +71,7 @@ const action = function () {
 		if (!downloadButton) {
 			downloadButton = createDownloadButton({
 				media: mediaNode,
-				dlIcon: iconBlack,
+				dlIcon: icon,
 				mouseLeaveOp: '0.3',
 				mouseEnterOp: '1.0',
 				btnClass: IDFI_BUTTON,
@@ -81,6 +81,10 @@ const action = function () {
 			mediaNode.after(downloadButton);
 			downloadButton.after(loader);
 			
+			if (document.URL.includes('instagram.com/stories')) {
+				downloadButton.style.top = '30px';
+				loader.style.top = '30px';
+			}
 			mediaNode.parentNode.style.display = "flex";
 		}
 		
