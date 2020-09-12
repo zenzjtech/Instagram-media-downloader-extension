@@ -13,5 +13,6 @@ module.exports = {
 	KEY_APP_STATE: 'mdfi-app-state',
 	KEY_APP_IMAGE_RESOLUTION: 'image-resolution',
 	KEY_APP_ICON_POSITION: 'icon-position',
-	FAVORITE_BUTTON_CLASSNAME: 'wmtNn'
+	FAVORITE_BUTTON_CLASSNAME: 'wmtNn',
+	STORY_THUMBNAIL_CLASSNAME: '_6q-tv'
 }

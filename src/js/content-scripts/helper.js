@@ -8,7 +8,8 @@ import { IGTV_CLASSNAME_IDENTIFIER,
 	IDFI_BUTTON,
 	LOADER_CLASSNAME,
 	TAGGED_CLASSNAME_IDENTIFIED,
-	FAVORITE_BUTTON_CLASSNAME
+	FAVORITE_BUTTON_CLASSNAME,
+	STORY_THUMBNAIL_CLASSNAME
 } from '../constants';
 
 export function isInstPost(mediaNode) {
@@ -30,8 +31,11 @@ export function getMediaNode() {
 	const videos = Array.from(document.querySelectorAll('video'));
 	// IGTV video
 	const igtvVideos = Array.from(document.getElementsByClassName(IGTV_CLASSNAME_IDENTIFIER));
-	const videoAndImage = images.concat(videos).concat(igtvVideos);
-	return videoAndImage;
+	let mediaNodes = images.concat(videos).concat(igtvVideos);
+	
+	// exlcuding stories
+	mediaNodes = mediaNodes.filter(node => node.className !== STORY_THUMBNAIL_CLASSNAME);
+	return mediaNodes;
 }
 
 export function createDownloadButton(
@@ -96,7 +100,7 @@ async function getMediaSrc(node, videoData) {
 		}
 	}
 	// Homepage or feed
-	const src = getVideoOrImageSrc(node, videoData);
+	const src = getMediaSrcAtHomePageOrFeed(node, videoData);
 	return src;
 }
 
@@ -181,7 +185,7 @@ const getHighestResolutionImg = image => {
 	return image && image.src ? image.src : '';
 }
 
-function getVideoOrImageSrc(media, videoData) {
+function getMediaSrcAtHomePageOrFeed(media, videoData) {
 	// if this post is a video
 	if (media.tagName === 'VIDEO') {
 		if (media.src)
