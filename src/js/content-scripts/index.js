@@ -59,7 +59,7 @@ function changeDownloadIconPosition(position) {
 	
 	if (position === ICON_POSITION_UNDER) {
 		// Remove icon whose type is within the image
-		if (isAtHomepage())
+		if (!isAllowedUnderBtn())
 			return;
 		inImagePosition.forEach(pos => {
 			Array.from(document.getElementsByClassName(pos))
@@ -144,18 +144,14 @@ const action = function () {
 			});
 			let loader = createDownloadLoader(mediaNode);
 			mediaNode.after(downloadButton);
-			if (appState[KEY_APP_ICON_POSITION] === ICON_POSITION_UNDER)
+			if (appState[KEY_APP_ICON_POSITION] === ICON_POSITION_UNDER) {
 				if (isAllowedUnderBtn())
 					setDisplay(downloadButton, loader, 'none')
-			
-			// Just add a random postion amongst 4 possible corner, so that it will be recognized
-			addClassList(downloadButton, loader, ICON_POSITION_TOPLEFT)
+				// Just add a random postion amongst 4 possible corner, so that it will be recognized
+				addClassList(downloadButton, loader, ICON_POSITION_TOPLEFT)
+			} else
+				addClassList(downloadButton, loader, appState[KEY_APP_ICON_POSITION])
 			downloadButton.after(loader);
-			
-			if (isAtStoriesPage()) {
-				downloadButton.style.top = '30px';
-				loader.style.top = '30px';
-			}
 			mediaNode.parentNode.style.display = "flex";
 		}
 		

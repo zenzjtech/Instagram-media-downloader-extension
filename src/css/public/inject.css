@@ -33,22 +33,22 @@
 }
 .tl {
     top: 0px;
-    left: 0px;
+    left: 0px !important;
 }
 
 .tr {
     top: 0px;
-    right: 0px
+    right: 0px !important;
 }
 
 .bl {
-    bottom: 0px;
-    left: 0px
+    bottom: 0px !important;
+    left: 0px !important;
 }
 
 .br {
-    bottom: 0px;
-    right: 0px
+    bottom: 0px !important;
+    right: 0px !important;
 }
 
 .under {
