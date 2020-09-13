@@ -26,6 +26,10 @@ export function isAtMediaDetailPage() {
 	return location.pathname.includes('/p/')
 }
 
+export function isAtIGTVDetailPage() {
+	return location.pathname.includes('/tv/')
+}
+
 export function isAllowedUnderBtn() {
-	return isAtNewsFeedPage() || isAtMediaDetailPage()
+	return isAtNewsFeedPage() || isAtMediaDetailPage() || isAtIGTVDetailPage()
 }

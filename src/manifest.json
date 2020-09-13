@@ -9,7 +9,8 @@
     "webRequest",
     "*://*.instagram.com/*",
     "downloads",
-    "storage"
+    "storage",
+    "tab"
   ],
   "web_accessible_resources": [
     "*.png",
