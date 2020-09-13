@@ -7,7 +7,11 @@ export function isAtStoriesPage() {
 }
 
 export function isAtHomepage() {
-	return !isAtNewsFeedPage() && !isAtStoriesPage() && !isAtExplorePage() && !isAtInboxPage();
+	return !isAtNewsFeedPage()
+		&& !isAtStoriesPage()
+		&& !isAtExplorePage()
+		&& !isAtInboxPage()
+		&& !isAtMediaDetailPage();
 }
 
 export function isAtInboxPage() {
@@ -20,4 +24,8 @@ export function isAtExplorePage() {
 
 export function isAtMediaDetailPage() {
 	return location.pathname.includes('/p/')
+}
+
+export function isAllowedUnderBtn() {
+	return isAtNewsFeedPage() || isAtMediaDetailPage()
 }

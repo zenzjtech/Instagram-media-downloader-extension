@@ -23,7 +23,7 @@ import {
 	createDownloadButton,
 	getFavoriteButton,
 	receiveNewVideoData,
-	isAtNewsFeedPage, isAtStoriesPage, isAtHomepage, isAtMediaDetailPage
+	isAtNewsFeedPage, isAtStoriesPage, isAtHomepage, isAtMediaDetailPage, isAllowedUnderBtn
 } from './helper/'
 
 let oldHref = document.location.href;
@@ -145,7 +145,7 @@ const action = function () {
 			let loader = createDownloadLoader(mediaNode);
 			mediaNode.after(downloadButton);
 			if (appState[KEY_APP_ICON_POSITION] === ICON_POSITION_UNDER)
-				if (isAtNewsFeedPage())
+				if (isAllowedUnderBtn())
 					setDisplay(downloadButton, loader, 'none')
 			
 			// Just add a random postion amongst 4 possible corner, so that it will be recognized
@@ -161,7 +161,7 @@ const action = function () {
 		
 		// Insert Download Button under the image/video
 		// This media must be an Instagram post, and only consider in news feed, and media detail page
-		if (!isInstPost(mediaNode) || (!isAtNewsFeedPage() && !isAtMediaDetailPage()))
+		if (!isInstPost(mediaNode) || !isAllowedUnderBtn())
 			return;
 		const favoriteButtonContainer = getFavoriteButton(mediaNode);
 		if (!favoriteButtonContainer)
