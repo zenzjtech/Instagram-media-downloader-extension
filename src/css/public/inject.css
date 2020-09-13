@@ -6,7 +6,7 @@
     color: #333 !important;
     height: 32px !important;
     padding: 5px !important;
-    display: block !important;
+    display: block;
     cursor: pointer !important;
     font-size: 32px !important;
     font-weight: bold !important;
@@ -31,28 +31,28 @@
 .wmtNn {
     display: flex !important;
 }
-.top-left {
+.tl {
     top: 0px;
     left: 0px;
 }
 
-.top-right {
+.tr {
     top: 0px;
     right: 0px
 }
 
-.bottom-left {
+.bl {
     bottom: 0px;
     left: 0px
 }
 
-.bottom-right {
+.br {
     bottom: 0px;
     right: 0px
 }
 
-.under-image {
-
+.under {
+    cursor: pointer;
 }
 
 .lds-ripple {

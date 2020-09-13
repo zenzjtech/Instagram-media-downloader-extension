@@ -53,7 +53,9 @@ export function getMediaNode() {
 
 export function createDownloadButton(
 	{
-		media, dlIcon, mouseEnterOp, mouseLeaveOp, btnClass, videoData
+		media, dlIcon, mouseEnterOp,
+		mouseLeaveOp, btnClass, backgroundSize,
+		videoData
 	}) {
 	media.setAttribute("button", IDFI_BUTTON);
 	/*  */
@@ -61,9 +63,9 @@ export function createDownloadButton(
 	button.setAttribute("type", IDFI_BUTTON);
 	button.setAttribute("class", btnClass);
 	button.setAttribute("title", "Download Media");
-	button.style.background = `transparent no-repeat center center`;
+	button.style.background = `white no-repeat center center`;
 	button.style.backgroundImage = `url(${dlIcon})`
-	button.style.backgroundSize = "35px";
+	button.style.backgroundSize = backgroundSize;
 	/*  */
 	button.addEventListener("mouseenter", function () {
 		this.style.opacity = mouseEnterOp

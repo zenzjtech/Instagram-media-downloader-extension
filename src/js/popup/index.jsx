@@ -3,7 +3,7 @@ import Switch from '@material-ui/core/Switch'
 import { hot } from "react-hot-loader";
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import Typography from '@material-ui/core/Typography'
-import {KEY_APP_STATE} from '../constants'
+import {KEY_APP_VISIBILITY} from '../constants'
 
 const useStyles = makeStyles({
   root: {
@@ -29,15 +29,15 @@ const Popup = props =>  {
   
   useEffect(() => {
     (async () => {
-      const result = await chrome.storage.local.get({[KEY_APP_STATE] : true});
+      const result = await chrome.storage.sync.get({[KEY_APP_VISIBILITY] : true});
       console.log(result);
-      if (result[KEY_APP_STATE] !== undefined)
-        setAppState(result[KEY_APP_STATE]);
+      if (result[KEY_APP_VISIBILITY] !== undefined)
+        setAppState(result[KEY_APP_VISIBILITY]);
     })();
   }, [])
   
   const handleChange = async () => {
-    await chrome.storage.local.set({ [KEY_APP_STATE]: !appState});
+    await chrome.storage.sync.set({ [KEY_APP_VISIBILITY]: !appState});
     setAppState(!appState);
   };
   

@@ -16,11 +16,18 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Grid from '@material-ui/core/Grid'
 require('chrome-extension-async');
 
-import { KEY_APP_IMAGE_RESOLUTION, KEY_APP_ICON_POSITION } from 'js/constants';
+import { KEY_APP_IMAGE_RESOLUTION,
+	KEY_APP_ICON_POSITION,
+	ICON_POSITION_TOPLEFT,
+	ICON_POSITION_TOPRIGHT,
+	ICON_POSITION_BOTTOMLEFT,
+	ICON_POSITION_BOTTOMRIGHT,
+	ICON_POSITION_UNDER
+} from 'js/constants';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		width: theme.spacing(80),
+		width: theme.spacing(108),
 		margin: '0 auto',
 		marginTop: '150px'
 	},
@@ -103,12 +110,12 @@ export default function Option() {
 						<Grid
 							item component={FormLabel}
 							className={classes.labelIconPosition}
-							xs={4}
+							xs={3}
 						>
 							Image resolution:
 						</Grid>
 						<Grid
-							item xs={2} component={FormControl}
+							item component={FormControl}
 							className={classes.formControl}
 						>
 							<Select
@@ -130,7 +137,7 @@ export default function Option() {
 							item
 							component={FormLabel}
 							className={classes.labelIconPosition}
-							xs={4}
+							xs={3}
 						>
 							Icon position:
 						</Grid>
@@ -142,21 +149,33 @@ export default function Option() {
 								onChange={handleChangeIconPosition}
 							>
 								<FormControlLabel
-									value="tl"
+									value={ICON_POSITION_TOPLEFT}
 									control={	<Radio/>}
 									label="Top Left"
 									labelPlacement="bottom"
 								/>
 								<FormControlLabel
-									value="tr"
+									value={ICON_POSITION_TOPRIGHT}
 									control={<Radio/>}
 									label="Top Right"
 									labelPlacement="bottom"
 								/>
 								<FormControlLabel
-									value="under"
+									value={ICON_POSITION_BOTTOMLEFT}
 									control={<Radio/>}
-									label="Below"
+									label="Bottom Left"
+									labelPlacement="bottom"
+								/>
+								<FormControlLabel
+									value={ICON_POSITION_BOTTOMRIGHT}
+									control={<Radio/>}
+									label="Bottom Right"
+									labelPlacement="bottom"
+								/>
+								<FormControlLabel
+									value={ICON_POSITION_UNDER}
+									control={<Radio/>}
+									label="Below image"
 									labelPlacement="bottom"
 								/>
 							</RadioGroup>

@@ -3,8 +3,15 @@ require('./inject');
 
 import {
 	IDFI_BUTTON_LOADER,
-	IDFI_BUTTON, KEY_APP_STATE,
-	IDFI_BUTTON_UNDER
+	IDFI_BUTTON, KEY_APP_VISIBILITY,
+	IDFI_BUTTON_UNDER,
+	KEY_APP_IMAGE_RESOLUTION,
+	KEY_APP_ICON_POSITION,
+	ICON_POSITION_UNDER,
+	ICON_POSITION_TOPLEFT,
+	ICON_POSITION_TOPRIGHT,
+	ICON_POSITION_BOTTOMLEFT,
+	ICON_POSITION_BOTTOMRIGHT
 } from '../constants'
 import { loadBulkDownloadUI } from './bulkdownload';
 import { isInstPost,
@@ -17,18 +24,60 @@ import { isInstPost,
 
 let oldHref = document.location.href;
 let videoData = [];
-let appState = true;
-const icon = chrome.runtime.getURL('asset/img/download_white.svg');
+let appState = {
+	[KEY_APP_ICON_POSITION]: 'under'
+};
+const icon = chrome.runtime.getURL('asset/img/download_black_bold.svg');
 const iconBlack = chrome.runtime.getURL('asset/img/download_black.svg');
 
-const load = function (appState) {observer.observe(document.body, {"childList": true, "subtree": true})};
+const load = function () {
+	observer.observe(document.body, {
+		"childList": true,
+		"subtree": true
+	})
+};
 
-const setUiVisible = (show = true) => {
+const updateVisibility = (show = true) => {
 	let elements = document.querySelectorAll(`[type='${IDFI_BUTTON}']`);
 	elements = Array.from(elements).filter(element => element.getAttribute("name") !== IDFI_BUTTON_LOADER)
 	elements.forEach(element => {
 		element.style.visibility = show ? 'visible' : 'hidden';
 	})
+}
+
+function changeDownloadIconPosition(position) {
+	const inImagePosition = [
+		ICON_POSITION_TOPRIGHT,
+		ICON_POSITION_TOPLEFT,
+		ICON_POSITION_BOTTOMRIGHT,
+		ICON_POSITION_BOTTOMLEFT
+	]
+	
+	if (position === ICON_POSITION_UNDER) {
+		// Remove icon whose type is within the image
+		inImagePosition.forEach(pos => {
+			Array.from(document.getElementsByClassName(pos))
+				.forEach(btn => btn.style.display = 'none')
+		});
+		Array.from(document.getElementsByClassName(position))
+			.forEach(btn => btn.style.display = 'unset');
+		return;
+	}
+	
+	// Otherwise, First, remove the under-image download button
+	Array.from(document.getElementsByClassName(ICON_POSITION_UNDER))
+		.forEach(btn => btn.style.display = 'none');
+	// Then, update the position of in-image btns
+	
+	inImagePosition
+		.forEach(pos => {
+			Array.from(document.getElementsByClassName(pos)).forEach(btn => {
+				btn.classList.remove(pos);
+				btn.classList.add(position)
+				btn.style.display = 'block';
+			})
+		});
+	
 }
 
 function handleUrlChange() {
@@ -56,7 +105,7 @@ const observer = new MutationObserver(function (m) {
 						action(true);
 					}
 					if (type && type.indexOf(IDFI_BUTTON) !== -1 && name !== IDFI_BUTTON_LOADER)
-							tmp.style.visibility = appState ? 'visible' : 'hidden';
+						tmp.style.visibility = appState[KEY_APP_VISIBILITY] ? 'visible' : 'hidden';
 				}
 			}
 		}
@@ -64,6 +113,15 @@ const observer = new MutationObserver(function (m) {
 });
 
 const action = function () {
+	function setDisplay(downloadButton, loader, display = 'none') {
+		downloadButton.style.display = display;
+		loader.style.display = display
+	}
+	function addClassList(downloadButton, loader, className) {
+		downloadButton.classList.add(className)
+		loader.classList.add(className)
+	}
+	
 	const videoAndImage = getMediaNode();
 	videoAndImage.forEach(mediaNode => {
 		// Insert Download Button within the image/video
@@ -75,10 +133,16 @@ const action = function () {
 				mouseLeaveOp: '0.3',
 				mouseEnterOp: '1.0',
 				btnClass: IDFI_BUTTON,
-				videoData
+				videoData,
+				backgroundSize: '25px'
 			});
 			let loader = createDownloadLoader(mediaNode);
 			mediaNode.after(downloadButton);
+			if (appState[KEY_APP_ICON_POSITION] === ICON_POSITION_UNDER)
+				setDisplay(downloadButton, loader, 'none')
+			
+			// Just add a random postion amongst 4 possible corner, so that it will be recognized
+			addClassList(downloadButton, loader, ICON_POSITION_TOPLEFT)
 			downloadButton.after(loader);
 			
 			if (document.URL.includes('instagram.com/stories')) {
@@ -102,22 +166,31 @@ const action = function () {
 				dlIcon: iconBlack,
 				mouseEnterOp: '0.7',
 				mouseLeaveOp: '1.0',
-				btnClass: IDFI_BUTTON_UNDER
+				btnClass: IDFI_BUTTON_UNDER,
+				backgroundSize: '35px',
+				videoData
 			});
 			let loader = createDownloadLoader(mediaNode);
 			favoriteButtonContainer.setAttribute('button', IDFI_BUTTON);
 			favoriteButtonContainer.insertBefore(downloadButton, favoriteButtonContainer.childNodes[0]);
+			if (appState[KEY_APP_ICON_POSITION] !== ICON_POSITION_UNDER)
+				setDisplay(downloadButton, loader, 'none')
+			
+			addClassList(downloadButton, loader, ICON_POSITION_UNDER)
 			downloadButton.after(loader);
 		}
 	})
 };
 
 async function process() {
-	const storageData = await chrome.storage.local.get({ [KEY_APP_STATE]: true});
-	appState = storageData[KEY_APP_STATE];
+	appState = await chrome.storage.sync.get({
+		[KEY_APP_VISIBILITY]: true,
+		[KEY_APP_IMAGE_RESOLUTION]: 1080,
+		[KEY_APP_ICON_POSITION]: 'under'
+	});
 	
 	videoData = await receiveNewVideoData(videoData)
-	load(appState);
+	load();
 	loadBulkDownloadUI();
 	window.addEventListener('message', function(event) {
 		if (event.data && event.data.type === 'videoData')
@@ -126,10 +199,26 @@ async function process() {
 }
 
 chrome.storage.onChanged.addListener(function(changes, areaName) {
-	if (areaName === 'local' && changes[KEY_APP_STATE]) {
-		appState = changes[KEY_APP_STATE].newValue;
-		setUiVisible(appState);
-	}
+	[
+		KEY_APP_VISIBILITY,
+		KEY_APP_ICON_POSITION,
+		KEY_APP_IMAGE_RESOLUTION
+	].forEach(key => {
+		if (changes[key]) {
+			appState[key] = changes[key].newValue;
+			switch (key) {
+				case KEY_APP_VISIBILITY:
+					updateVisibility(appState[key]);
+					break;
+				case KEY_APP_ICON_POSITION:
+					changeDownloadIconPosition(appState[key])
+					break;
+				case KEY_APP_IMAGE_RESOLUTION:
+					break;
+				default:
+			}
+		}
+	})
 })
 
 process();
