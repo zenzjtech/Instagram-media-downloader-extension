@@ -11,7 +11,9 @@ import {
 	ICON_POSITION_TOPLEFT,
 	ICON_POSITION_TOPRIGHT,
 	ICON_POSITION_BOTTOMLEFT,
-	ICON_POSITION_BOTTOMRIGHT
+	ICON_POSITION_BOTTOMRIGHT,
+	KEY_LOCALSTORAGE_IMAGE_RESOLUTION,
+	IMAGE_RESOLUTION
 } from '../constants'
 import { loadBulkDownloadUI } from './bulkdownload';
 import { isInstPost,
@@ -214,6 +216,10 @@ chrome.storage.onChanged.addListener(function(changes, areaName) {
 					changeDownloadIconPosition(appState[key])
 					break;
 				case KEY_APP_IMAGE_RESOLUTION:
+					localStorage.setItem(
+						KEY_LOCALSTORAGE_IMAGE_RESOLUTION,
+						IMAGE_RESOLUTION[appState[key]].toString()
+					)
 					break;
 				default:
 			}

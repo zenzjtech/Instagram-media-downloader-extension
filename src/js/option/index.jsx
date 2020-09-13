@@ -1,10 +1,10 @@
 import React, {useEffect} from 'react'
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
+import {makeStyles} from '@material-ui/core/styles'
+import Paper from '@material-ui/core/Paper'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
-import icon from 'img/icon-34.png';
+import icon from 'img/icon-34.png'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
@@ -14,16 +14,19 @@ import FormLabel from '@material-ui/core/FormLabel'
 import RadioGroup from '@material-ui/core/RadioGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Grid from '@material-ui/core/Grid'
-require('chrome-extension-async');
-
-import { KEY_APP_IMAGE_RESOLUTION,
-	KEY_APP_ICON_POSITION,
-	ICON_POSITION_TOPLEFT,
-	ICON_POSITION_TOPRIGHT,
+import {
 	ICON_POSITION_BOTTOMLEFT,
 	ICON_POSITION_BOTTOMRIGHT,
-	ICON_POSITION_UNDER
-} from 'js/constants';
+	ICON_POSITION_TOPLEFT,
+	ICON_POSITION_TOPRIGHT,
+	ICON_POSITION_UNDER,
+	IMAGE_RESOLUTION,
+	KEY_APP_ICON_POSITION,
+	KEY_APP_IMAGE_RESOLUTION
+} from 'js/constants'
+import Tooltip from '@material-ui/core/Tooltip'
+
+require('chrome-extension-async');
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -65,7 +68,7 @@ export default function Option() {
 			]);
 			if (result[KEY_APP_ICON_POSITION])
 				setIconPosition(result[KEY_APP_ICON_POSITION]);
-			if (result[KEY_APP_IMAGE_RESOLUTION])
+			if (result[KEY_APP_IMAGE_RESOLUTION] !== undefined)
 				setResolution(result[KEY_APP_IMAGE_RESOLUTION]);
 		})();
 	}, [])
@@ -107,26 +110,30 @@ export default function Option() {
 				</Grid>
 				<Grid container className={classes.actionArea}>
 					<Grid container alignItems={"baseline"}>
-						<Grid
-							item component={FormLabel}
-							className={classes.labelIconPosition}
-							xs={3}
-						>
-							Image resolution:
-						</Grid>
+						<Tooltip title={"The version whose value is closest to the selected resolution will be downloaded"}>
+							<Grid
+								item component={FormLabel}
+								className={classes.labelIconPosition}
+								xs={3}
+							>
+								Image resolution:
+							</Grid>
+						</Tooltip>
 						<Grid
 							item component={FormControl}
 							className={classes.formControl}
 						>
+							
 							<Select
 								labelId="demo-simple-select-helper-label"
 								id="demo-simple-select-helper"
 								value={resolution}
 								onChange={handleChange}
-							>
-								<MenuItem value={1}>640</MenuItem>
-								<MenuItem value={2}>750</MenuItem>
-								<MenuItem value={3}>1080</MenuItem>
+							>{
+								IMAGE_RESOLUTION.map((value, index) =>
+									<MenuItem value={index}>{value}</MenuItem>
+								)
+							}
 							</Select>
 							<FormHelperText> Unit: pixel </FormHelperText>
 						</Grid>

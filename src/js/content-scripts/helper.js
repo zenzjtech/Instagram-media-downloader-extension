@@ -9,7 +9,9 @@ import { IGTV_CLASSNAME_IDENTIFIER,
 	LOADER_CLASSNAME,
 	TAGGED_CLASSNAME_IDENTIFIED,
 	FAVORITE_BUTTON_CLASSNAME,
-	STORY_CONTAINER_CLASSNAME
+	STORY_CONTAINER_CLASSNAME,
+	KEY_LOCALSTORAGE_IMAGE_RESOLUTION,
+	DEFAULT_IMAGE_RESOLUTION
 } from '../constants';
 
 export function isInstPost(mediaNode) {
@@ -191,11 +193,28 @@ function extractVideoData(data) {
 	return tempVideos;
 }
 
-const getHighestResolutionImg = image => {
+const getCustomResolutionImg = (image) => {
+	// This is hacky, but it's amongst the best available sollution
+	let desiredResolution = localStorage.getItem(KEY_LOCALSTORAGE_IMAGE_RESOLUTION) || DEFAULT_IMAGE_RESOLUTION;
+	desiredResolution = parseInt(desiredResolution);
+	function getResolution(img) {
+		return parseInt(img.split(' ')[1].replace('w', ''));
+	}
+	function getHref(img) {
+		return img.split(' ')[0];
+	}
+	function getResolutionDifference(img1, desiredResolution) {
+		return Math.abs(getResolution(img1) - desiredResolution);
+	}
+	
 	if (image.srcset) {
-		const imgset = image.srcset.split(',');
-		const lastImage = imgset[imgset.length - 1];
-		let result = lastImage.split(' ')[0];
+		const srcSet = image.srcset.split(',');
+		let result = srcSet[srcSet.length - 1];
+		srcSet.forEach(img => {
+			if (getResolutionDifference(img, desiredResolution) < getResolutionDifference(result, desiredResolution))
+				result = img;
+		})
+		result = getHref(result);
 		if (!result.startsWith('http'))
 			result = 'https://instagram.com' + result;
 		return result;
@@ -217,5 +236,5 @@ export function getMediaSrcAtHomePageOrFeed(media, videoData) {
 	if (found)
 		return found.video_url;
 	// Else this is an image
-	return getHighestResolutionImg(media);
+	return getCustomResolutionImg(media);
 }
