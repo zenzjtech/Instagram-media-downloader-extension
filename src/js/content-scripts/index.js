@@ -23,7 +23,7 @@ import {
 	createDownloadButton,
 	getFavoriteButton,
 	receiveNewVideoData,
-	isAtNewsFeedPage, isAtStoriesPage
+	isAtNewsFeedPage, isAtStoriesPage, isAtHomepage, isAtMediaDetailPage
 } from './helper/'
 
 let oldHref = document.location.href;
@@ -59,6 +59,8 @@ function changeDownloadIconPosition(position) {
 	
 	if (position === ICON_POSITION_UNDER) {
 		// Remove icon whose type is within the image
+		if (isAtHomepage())
+			return;
 		inImagePosition.forEach(pos => {
 			Array.from(document.getElementsByClassName(pos))
 				.forEach(btn => btn.style.display = 'none')
@@ -158,8 +160,8 @@ const action = function () {
 		}
 		
 		// Insert Download Button under the image/video
-		// This media must be an Instagram post, and only consider in news feed
-		if (!isInstPost(mediaNode) || !isAtNewsFeedPage())
+		// This media must be an Instagram post, and only consider in news feed, and media detail page
+		if (!isInstPost(mediaNode) || (!isAtNewsFeedPage() && !isAtMediaDetailPage()))
 			return;
 		const favoriteButtonContainer = getFavoriteButton(mediaNode);
 		if (!favoriteButtonContainer)

@@ -13,6 +13,7 @@ import { IGTV_CLASSNAME_IDENTIFIER,
 	KEY_LOCALSTORAGE_IMAGE_RESOLUTION,
 	DEFAULT_IMAGE_RESOLUTION
 } from '../../constants';
+import {isAtMediaDetailPage} from './navigation'
 
 export function isInstPost(mediaNode) {
 	return mediaNode.tagName === 'VIDEO' || (mediaNode.srcset && mediaNode.alt !== 'Instagram')
@@ -223,6 +224,13 @@ const getCustomResolutionImg = (image) => {
 	return image && image.src ? image.src : '';
 }
 
+function findCommonAncestorWithVideoChildRen(node) {
+	if (!node)
+		return null;
+	if (node.querySelector('video'))
+		return node.querySelector('video');
+	return findCommonAncestorWithVideoChildRen(node.parentElement);
+}
 export function getMediaSrcAtHomePageOrFeed(media, videoData) {
 	// if this post is a video
 	if (media.tagName === 'VIDEO') {
@@ -231,11 +239,19 @@ export function getMediaSrcAtHomePageOrFeed(media, videoData) {
 		const source = media.querySelector('source');
 		return source ? source.src : '';
 	}
+	
 	let src = media && media.src ? media.src : '';
 	// If this post is a reference to a video at Homepage
 	const found = videoData.find(data => data.thumbnail_src === src);
 	if (found)
 		return found.video_url;
+	
+	// If this is a video at specific page
+	if (isAtMediaDetailPage()){
+		const video = findCommonAncestorWithVideoChildRen(media);
+		if (video)
+			return video.src;
+	}
 	
 	// If this post is a reference to a video at NewsFeed
 	const video = media.parentElement.querySelector('video');

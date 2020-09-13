@@ -7,7 +7,7 @@ export function isAtStoriesPage() {
 }
 
 export function isAtHomepage() {
-	return !isAtNewsFeedPage() && !isAtStoriesPage() && !isAtExplorePage() && isAtInboxPage();
+	return !isAtNewsFeedPage() && !isAtStoriesPage() && !isAtExplorePage() && !isAtInboxPage();
 }
 
 export function isAtInboxPage() {
@@ -16,4 +16,8 @@ export function isAtInboxPage() {
 
 export function isAtExplorePage() {
 	return location.pathname.includes('/explore/');
+}
+
+export function isAtMediaDetailPage() {
+	return location.pathname.includes('/p/')
 }
