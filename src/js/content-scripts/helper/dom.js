@@ -1,6 +1,6 @@
 import { fetchAdditionalData,
 	fetchSingleNodeData
-} from '../utils/';
+} from '../../utils';
 
 import { IGTV_CLASSNAME_IDENTIFIER,
 	MSG_DOWNLOAD_FILE,
@@ -12,10 +12,10 @@ import { IGTV_CLASSNAME_IDENTIFIER,
 	STORY_CONTAINER_CLASSNAME,
 	KEY_LOCALSTORAGE_IMAGE_RESOLUTION,
 	DEFAULT_IMAGE_RESOLUTION
-} from '../constants';
+} from '../../constants';
 
 export function isInstPost(mediaNode) {
-	return mediaNode.srcset && mediaNode.alt !== 'Instagram'
+	return mediaNode.tagName === 'VIDEO' || (mediaNode.srcset && mediaNode.alt !== 'Instagram')
 }
 
 export function createDownloadLoader() {
@@ -37,7 +37,7 @@ function hasParentWithClassName(node, className) {
 }
 
 export function getMediaNode() {
-
+	
 	const images = Array.from(document.querySelectorAll("img"));
 	const videos = Array.from(document.querySelectorAll('video'));
 	// IGTV video
@@ -104,6 +104,7 @@ export async function getMediaSrc(node, videoData) {
 		const currentNodeVideoUrl = getCurrentVideoUrl(data);
 		return currentNodeVideoUrl;
 	}
+	// If this node is at HomePage -> Tag
 	if (node.className === TAGGED_CLASSNAME_IDENTIFIED) {
 		const isVideo = containerNode.parentElement.querySelector('[aria-label="Video"]') !== null;
 		if (isVideo) {
@@ -231,10 +232,16 @@ export function getMediaSrcAtHomePageOrFeed(media, videoData) {
 		return source ? source.src : '';
 	}
 	let src = media && media.src ? media.src : '';
-	// If this post is a reference to a video
+	// If this post is a reference to a video at Homepage
 	const found = videoData.find(data => data.thumbnail_src === src);
 	if (found)
 		return found.video_url;
+	
+	// If this post is a reference to a video at NewsFeed
+	const video = media.parentElement.querySelector('video');
+	if (video)
+		return video.src;
 	// Else this is an image
 	return getCustomResolutionImg(media);
 }
+

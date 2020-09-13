@@ -131,7 +131,7 @@ export default function Option() {
 								onChange={handleChange}
 							>{
 								IMAGE_RESOLUTION.map((value, index) =>
-									<MenuItem value={index}>{value}</MenuItem>
+									<MenuItem key={index} value={index}>{value}</MenuItem>
 								)
 							}
 							</Select>

@@ -3,7 +3,7 @@ import {
 	DOWNLOAD_ALL_MODAL_CLASSNAME, MSG_DOWNLOAD_FILE, IDFI_BUTTON, IDFI_BUTTON_DOWNLOAD_ALL
 } from '../constants'
 import $ from 'jquery';
-import {getMediaSrcAtHomePageOrFeed} from './helper'
+import {getMediaSrcAtHomePageOrFeed} from './helper/'
 
 export function loadBulkDownloadUI() {
 	let counter = 0;

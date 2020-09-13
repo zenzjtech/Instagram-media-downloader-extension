@@ -16,13 +16,15 @@ import {
 	IMAGE_RESOLUTION
 } from '../constants'
 import { loadBulkDownloadUI } from './bulkdownload';
-import { isInstPost,
+import {
+	isInstPost,
 	createDownloadLoader,
 	getMediaNode,
 	createDownloadButton,
 	getFavoriteButton,
-	receiveNewVideoData
-} from './helper';
+	receiveNewVideoData,
+	isAtNewsFeedPage, isAtStoriesPage
+} from './helper/'
 
 let oldHref = document.location.href;
 let videoData = [];
@@ -141,13 +143,14 @@ const action = function () {
 			let loader = createDownloadLoader(mediaNode);
 			mediaNode.after(downloadButton);
 			if (appState[KEY_APP_ICON_POSITION] === ICON_POSITION_UNDER)
-				setDisplay(downloadButton, loader, 'none')
+				if (isAtNewsFeedPage())
+					setDisplay(downloadButton, loader, 'none')
 			
 			// Just add a random postion amongst 4 possible corner, so that it will be recognized
 			addClassList(downloadButton, loader, ICON_POSITION_TOPLEFT)
 			downloadButton.after(loader);
 			
-			if (document.URL.includes('instagram.com/stories')) {
+			if (isAtStoriesPage()) {
 				downloadButton.style.top = '30px';
 				loader.style.top = '30px';
 			}
@@ -156,7 +159,7 @@ const action = function () {
 		
 		// Insert Download Button under the image/video
 		// This media must be an Instagram post, and only consider in news feed
-		if (!isInstPost(mediaNode) || location.pathname !== '/')
+		if (!isInstPost(mediaNode) || !isAtNewsFeedPage())
 			return;
 		const favoriteButtonContainer = getFavoriteButton(mediaNode);
 		if (!favoriteButtonContainer)
