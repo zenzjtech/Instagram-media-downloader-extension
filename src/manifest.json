@@ -10,7 +10,7 @@
     "*://*.instagram.com/*",
     "downloads",
     "storage",
-    "tab"
+    "tabs"
   ],
   "web_accessible_resources": [
     "*.png",

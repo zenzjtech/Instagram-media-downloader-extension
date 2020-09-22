@@ -13,7 +13,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	return true;
 })
 
-chrome.webRequest.onCompleted.addListener(function (details) {
-		console.log(details);
-	}, { urls: ["*://*.instagram.com/graphql/query/?query_hash=*"]}
-)
+chrome.runtime.onInstalled.addListener(function() {
+	chrome.tabs.create({ url: 'https://google.com' })
+})
