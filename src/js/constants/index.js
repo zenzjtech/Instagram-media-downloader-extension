@@ -12,6 +12,7 @@ module.exports = {
 	TOPRIGHT_NAV_ELEMENT_CLASSNAME: 'Fifk5',
 	KEY_APP_VISIBILITY: 'mdfi-app-state',
 	KEY_APP_IMAGE_RESOLUTION: 'image-resolution',
+	KEY_APP_ICON_TYPE: 'icon-type',
 	KEY_APP_ICON_POSITION: 'icon-position',
 	KEY_LOCALSTORAGE_IMAGE_RESOLUTION: 'local-resolution',
 	DEFAULT_IMAGE_RESOLUTION: '1080lper',
@@ -22,5 +23,9 @@ module.exports = {
 	ICON_POSITION_TOPRIGHT: 'tr',
 	ICON_POSITION_BOTTOMLEFT: 'bl',
 	ICON_POSITION_BOTTOMRIGHT: 'br',
+	ICON_TYPE_GET_APP: 'GetAppIcon',
+	ICON_TYPE_CLOUD_DOWNLOAD: 'CloudDownloadIcon',
+	ICON_TYPE_SYSTEM_UPDATE: 'SystemUpdateIcon',
+	ICON_TYPE_SYSTEM_UPDATE_ALT: 'SystemUpdateALtIcon',
 	IMAGE_RESOLUTION: [150, 240, 320, 480, 640, 750, 1080]
 }
