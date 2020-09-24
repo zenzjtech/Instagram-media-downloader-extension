@@ -1,7 +1,10 @@
 const iconPath = 'asset/img/';
 const SystemUpdateAltIcon = {
 	main: chrome.runtime.getURL(`${iconPath}download_black_bold.svg`),
-	under: chrome.runtime.getURL(`${iconPath}download_black.svg`)
+	under: chrome.runtime.getURL(`${iconPath}download_black.svg`),
+	style: {
+		'margin-top': '0px'
+	}
 };
 const SystemUpdateIcon = {
 	main: chrome.runtime.getURL(`${iconPath}system_update-black-48dp.svg`),

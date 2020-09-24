@@ -10,6 +10,7 @@ import icon from 'img/icon-34.png'
 import ImageResolution from './ImageResolution'
 import IconPosition from './IconPosition'
 import IconForm from './IconForm'
+import Switcher from './Switcher'
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -24,16 +25,16 @@ const useStyles = makeStyles((theme) => ({
 		minWidth: 120,
 	},
 	headerText: {
-		fontSize: '1.5em',
 		marginLeft: theme.spacing(1),
-		fontWeight: 'bold'
+		fontWeight: 600,
 	},
 	actionArea: {
 		flexDirection: 'column',
 		margin: `0 ${theme.spacing(6)}px`
 	},
 	labelIconPosition: {
-		fontWeight: 'bold'
+		fontWeight: 600,
+		fontSize: '0.9rem'
 	}
 }));
 
@@ -49,7 +50,8 @@ export default function Options() {
 					alignItems={"center"}
 					justify={"center"}
 					style={{
-						height: "100px"
+						height: "100px",
+						paddingTop: "40px"
 					}}
 				>
 					<Avatar
@@ -60,6 +62,7 @@ export default function Options() {
 					<Typography className={classes.headerText}>Download options</Typography>
 				</Grid>
 				<Grid container className={classes.actionArea}>
+					<Switcher classes={classes}/>
 					<ImageResolution classes={classes}/>
 					<IconForm classes={classes}/>
 					<IconPosition classes={classes}/>

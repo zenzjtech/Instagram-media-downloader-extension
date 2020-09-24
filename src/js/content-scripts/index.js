@@ -53,7 +53,7 @@ const changeIconType = (iconName) => {
 	let elements = document.querySelectorAll(`[type='${IDFI_BUTTON}']`);
 	elements = Array.from(elements)
 		.filter(element =>
-			element.getAttribute("name") !== IDFI_BUTTON_LOADER ||
+			element.getAttribute("name") !== IDFI_BUTTON_LOADER &&
 			element.getAttribute("name") !== IDFI_BUTTON_DOWNLOAD_ALL
 		);
 	elements.forEach(element => {
