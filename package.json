@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "A boilerplate to chrome extension with webpack",
   "scripts": {
-    "build": "node utils/build.js",
-    "buildz": "node utils/build.js && zip -r instagram-downloader-extension.zip build",
+    "build": "NODE_ENV=production node utils/build.js",
+    "buildz": "NODE_ENV=production node utils/build.js && zip -r instagram-downloader-extension.zip build",
     "start": "webpack -w && node utils/webserver.js"
   },
   "dependencies": {

@@ -13,7 +13,7 @@ import {
 	ICON_POSITION_BOTTOMLEFT,
 	ICON_POSITION_BOTTOMRIGHT,
 	KEY_LOCALSTORAGE_IMAGE_RESOLUTION,
-	IMAGE_RESOLUTION
+	IMAGE_RESOLUTION, KEY_APP_ICON_TYPE, ICON_TYPE_SYSTEM_UPDATE_ALT, IDFI_BUTTON_DOWNLOAD_ALL
 } from '../constants'
 import { loadBulkDownloadUI } from './bulkdownload';
 import {
@@ -23,7 +23,8 @@ import {
 	createDownloadButton,
 	getFavoriteButton,
 	receiveNewVideoData,
-	isAtNewsFeedPage, isAtStoriesPage, isAtHomepage, isAtMediaDetailPage, isAllowedUnderBtn
+	isAllowedUnderBtn,
+	mapIconNameToUrl
 } from './helper/'
 
 let oldHref = document.location.href;
@@ -31,8 +32,7 @@ let videoData = [];
 let appState = {
 	[KEY_APP_ICON_POSITION]: 'under'
 };
-const icon = chrome.runtime.getURL('asset/img/download_black_bold.svg');
-const iconBlack = chrome.runtime.getURL('asset/img/download_black.svg');
+
 
 const load = function () {
 	observer.observe(document.body, {
@@ -49,6 +49,18 @@ const updateVisibility = (show = true) => {
 	})
 }
 
+const changeIconType = (iconName) => {
+	let elements = document.querySelectorAll(`[type='${IDFI_BUTTON}']`);
+	elements = Array.from(elements)
+		.filter(element =>
+			element.getAttribute("name") !== IDFI_BUTTON_LOADER ||
+			element.getAttribute("name") !== IDFI_BUTTON_DOWNLOAD_ALL
+		);
+	elements.forEach(element => {
+		element.style.backgroundImage = element.classList.contains(IDFI_BUTTON_UNDER) ?
+			`url(${mapIconNameToUrl[iconName].under})` : `url(${mapIconNameToUrl[iconName].main})`;
+	})
+}
 function changeDownloadIconPosition(position) {
 	const inImagePosition = [
 		ICON_POSITION_TOPRIGHT,
@@ -58,7 +70,7 @@ function changeDownloadIconPosition(position) {
 	]
 	
 	if (position === ICON_POSITION_UNDER) {
-		// Remove icon whose type is within the image
+		// Remove SytemDownloadAltIcon whose type is within the image
 		if (!isAllowedUnderBtn())
 			return;
 		inImagePosition.forEach(pos => {
@@ -128,6 +140,7 @@ const action = function () {
 		loader.classList.add(className)
 	}
 	
+	const icon = mapIconNameToUrl[appState[KEY_APP_ICON_TYPE]];
 	const videoAndImage = getMediaNode();
 	videoAndImage.forEach(mediaNode => {
 		// Insert Download Button within the image/video
@@ -135,7 +148,7 @@ const action = function () {
 		if (!downloadButton) {
 			downloadButton = createDownloadButton({
 				media: mediaNode,
-				dlIcon: icon,
+				dlIcon: icon.main,
 				mouseLeaveOp: '0.3',
 				mouseEnterOp: '1.0',
 				btnClass: IDFI_BUTTON,
@@ -166,13 +179,21 @@ const action = function () {
 		if (!downloadButton) {
 			downloadButton = createDownloadButton({
 				media: mediaNode,
-				dlIcon: iconBlack,
+				dlIcon: icon.under,
 				mouseEnterOp: '0.7',
 				mouseLeaveOp: '1.0',
 				btnClass: IDFI_BUTTON_UNDER,
 				backgroundSize: '35px',
 				videoData
 			});
+			// Set custom style
+			console.log(icon.style)
+			if (icon.style) {
+				Object.entries(icon.style).forEach(([key, val]) => {
+					console.log(key, val);
+					downloadButton.style[key] = val;
+				})
+			}
 			let loader = createDownloadLoader(mediaNode);
 			favoriteButtonContainer.setAttribute('button', IDFI_BUTTON);
 			favoriteButtonContainer.insertBefore(downloadButton, favoriteButtonContainer.childNodes[0]);
@@ -189,7 +210,8 @@ async function process() {
 	appState = await chrome.storage.sync.get({
 		[KEY_APP_VISIBILITY]: true,
 		[KEY_APP_IMAGE_RESOLUTION]: 1080,
-		[KEY_APP_ICON_POSITION]: 'under'
+		[KEY_APP_ICON_POSITION]: ICON_POSITION_UNDER,
+		[KEY_APP_ICON_TYPE]: ICON_TYPE_SYSTEM_UPDATE_ALT
 	});
 	
 	videoData = await receiveNewVideoData(videoData)
@@ -205,7 +227,8 @@ chrome.storage.onChanged.addListener(function(changes, areaName) {
 	[
 		KEY_APP_VISIBILITY,
 		KEY_APP_ICON_POSITION,
-		KEY_APP_IMAGE_RESOLUTION
+		KEY_APP_IMAGE_RESOLUTION,
+		KEY_APP_ICON_TYPE
 	].forEach(key => {
 		if (changes[key]) {
 			appState[key] = changes[key].newValue;
@@ -221,6 +244,9 @@ chrome.storage.onChanged.addListener(function(changes, areaName) {
 						KEY_LOCALSTORAGE_IMAGE_RESOLUTION,
 						IMAGE_RESOLUTION[appState[key]].toString()
 					)
+					break;
+				case KEY_APP_ICON_TYPE:
+					changeIconType(appState[key])
 					break;
 				default:
 			}

@@ -66,9 +66,13 @@ export function createDownloadButton(
 	button.setAttribute("type", IDFI_BUTTON);
 	button.setAttribute("class", btnClass);
 	button.setAttribute("title", "Download Media");
-	button.style.background = `white no-repeat center center`;
-	button.style.backgroundImage = `url(${dlIcon})`
-	button.style.backgroundSize = backgroundSize;
+	if (typeof dlIcon === 'string') {
+		button.style.background = `white no-repeat center center`;
+		button.style.backgroundImage = `url(${dlIcon})`;
+		button.style.backgroundSize = backgroundSize;
+	} else {
+	
+	}
 	/*  */
 	button.addEventListener("mouseenter", function () {
 		this.style.opacity = mouseEnterOp

@@ -27,6 +27,7 @@ export function loadBulkDownloadUI() {
 			img.style.backgroundImage = `url(${bulkDownloadIconPath})`;
 			img.className = 'download-all';
 			img.setAttribute('type', IDFI_BUTTON);
+			img.setAttribute('name', IDFI_BUTTON_DOWNLOAD_ALL);
 			
 			container = document.createElement('div');
 			container.className = topRightNav.firstElementChild.className;
