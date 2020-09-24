@@ -2,7 +2,7 @@ import "../css/popup.css";
 import Popup from "js/popup/index";
 import React from "react";
 import { render } from "react-dom";
-import CssBaseline from '@material-ui/core/CssBaseline'
+import { CssBaseline } from '@material-ui/core';
 require('chrome-extension-async');
 
 render(

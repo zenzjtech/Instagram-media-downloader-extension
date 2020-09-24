@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "react-dom";
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Option from "js/option/index";
+import { CssBaseline } from '@material-ui/core';
 require('chrome-extension-async');
 
 render(
