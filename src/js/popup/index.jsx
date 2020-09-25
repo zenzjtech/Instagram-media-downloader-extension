@@ -11,6 +11,7 @@ import Link from '@material-ui/core/Link'
 import BulkDownload from './BulkDownload'
 import {MESSAGE_DOWNLOAD_ALL} from '../constants'
 import Tooltip from '@material-ui/core/Tooltip'
+import {sendMessageToActiveTab} from '../utils'
 
 const useStyles = makeStyles({
 	root: {
@@ -47,14 +48,9 @@ const Popup = () => {
 			return;
 		try {
 			(async () => {
-				const activeTabs = await chrome.tabs.query({
-					active: true,
-					currentWindow: true
-				});
-				const response = await chrome.tabs.sendMessage(activeTabs[0].id, {
+				await sendMessageToActiveTab({
 					type: MESSAGE_DOWNLOAD_ALL
 				})
-				console.log(response);
 			})()
 		} catch (e) {
 			console.log(e);

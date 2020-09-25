@@ -32,5 +32,6 @@ module.exports = {
 	// messgae
 	MESSAGE_DOWNLOAD_ALL: 'msg-download-all',
 	MESSAGE_DOCUMENT_SCROLL: 'msg-document-scroll',
-	MESSAGE_URL_CHANGE: 'msg-url-change'
+	MESSAGE_URL_CHANGE: 'msg-url-change',
+	MESSAGE_GET_IMAGES_TO_SHOW_ON_POPUP: 'get-image-to-show-on-popup'
 }

@@ -1,9 +1,11 @@
-import { MESSAGE_DOWNLOAD_ALL } from 'js/constants';
-import {handleDownloadAll, getDownloadMediaForPopupAction, debounce} from './dom'
-import {MESSAGE_DOCUMENT_SCROLL} from '../../constants'
+import { MESSAGE_DOWNLOAD_ALL, MESSAGE_GET_IMAGES_TO_SHOW_ON_POPUP } from 'js/constants';
+import {handleDownloadAll, getAllImageOnPage} from './dom'
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	switch (request.type) {
+		case MESSAGE_GET_IMAGES_TO_SHOW_ON_POPUP:
+			sendResponse({ payload: getAllImageOnPage() })
+			break;
 		case MESSAGE_DOWNLOAD_ALL:
 			try {
 				handleDownloadAll();

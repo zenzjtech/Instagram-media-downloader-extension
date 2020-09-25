@@ -32,7 +32,18 @@ const fetchSingleNodeData = async (url) => {
 	}
 }
 
+async function sendMessageToActiveTab(message) {
+	const activeTabs = await chrome.tabs.query({
+		active: true,
+		currentWindow: true
+	});
+	const response = await chrome.tabs.sendMessage(activeTabs[0].id, message)
+	return response;
+}
+
 module.exports = {
 	fetchAdditionalData,
-	fetchSingleNodeData
+	fetchSingleNodeData,
+	sendMessageToActiveTab
 }
+

@@ -18,8 +18,7 @@ import {
 	ICON_TYPE_SYSTEM_UPDATE_ALT,
 	IDFI_BUTTON_DOWNLOAD_ALL, MESSAGE_URL_CHANGE
 } from '../constants'
-// import { loadBulkDownloadUI } from './bulkdownload';
-require('./bulkdownload')
+import { loadBulkDownloadUI } from './bulkdownload';
 import {
 	isInstPost,
 	createDownloadLoader,
@@ -104,7 +103,7 @@ function changeDownloadIconPosition(position) {
 
 function handleUrlChange() {
 	window.postMessage({ type: MESSAGE_URL_CHANGE} , '*');
-	//loadBulkDownloadUI();
+	loadBulkDownloadUI();
 	oldHref = document.location.href;
 	(async () => {
 		videoData = await receiveNewVideoData(videoData);
@@ -219,7 +218,7 @@ async function process() {
 	
 	videoData = await receiveNewVideoData(videoData)
 	load();
-	//loadBulkDownloadUI();
+	loadBulkDownloadUI();
 	window.addEventListener('message', function(event) {
 		if (event.data && event.data.type === 'videoData')
 			videoData = videoData.concat(event.data.videoData);

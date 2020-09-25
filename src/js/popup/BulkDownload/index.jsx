@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
-import {MESSAGE_DOCUMENT_SCROLL} from '../../constants'
+import {MESSAGE_DOCUMENT_SCROLL, MESSAGE_GET_IMAGES_TO_SHOW_ON_POPUP} from '../../constants'
+import {sendMessageToActiveTab} from '../../utils'
 
 const useStyles = makeStyles((theme) => ({
 	gridList: {
@@ -11,51 +12,18 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-
-const getListDownloadMediaScript =`
-function getDownloadedMedia() {
-	return Array
-		.from(document.getElementsByTagName('img'))
-		.filter(media => media.srcset !== '' && media.alt !== 'Instagram')
-		.map(media => {
-			return {
-				alt: media.alt,
-				src: media.src,
-				width: media.naturalWidth,
-				height: media.naturalHeight
-			}
-		});
-}
-
-getDownloadedMedia();`
-
-
 export default function BulkDownload(props) {
 	const classes = Object.assign({}, props.classes, useStyles());
 	const [images, setImages] = useState([]);
-
-	useEffect(() => {
-		chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-			switch (message.type) {
-				case MESSAGE_DOCUMENT_SCROLL:
-					setImages(message.payload)
-					console.log(MESSAGE_DOCUMENT_SCROLL);
-					sendResponse({ type: MESSAGE_DOCUMENT_SCROLL });
-					break;
-				default:
-					break;
-			}
-			return true;
-		})
-	})
 	
 	useEffect(() => {
 		(async () => {
 			try {
-				const result = await chrome.tabs.executeScript({
-					code: getListDownloadMediaScript
-				});
-				setImages(result[0]);
+				const response = await sendMessageToActiveTab({
+					type: MESSAGE_GET_IMAGES_TO_SHOW_ON_POPUP
+				})
+				if (response)
+					setImages(response.payload);
 			}
 			catch (e) {
 				console.log(e);

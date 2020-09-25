@@ -2,7 +2,8 @@ import { fetchAdditionalData,
 	fetchSingleNodeData
 } from '../../utils';
 
-import { IGTV_CLASSNAME_IDENTIFIER,
+import {
+	IGTV_CLASSNAME_IDENTIFIER,
 	MSG_DOWNLOAD_FILE,
 	IDFI_BUTTON_LOADER,
 	IDFI_BUTTON,
@@ -11,9 +12,10 @@ import { IGTV_CLASSNAME_IDENTIFIER,
 	FAVORITE_BUTTON_CLASSNAME,
 	STORY_CONTAINER_CLASSNAME,
 	KEY_LOCALSTORAGE_IMAGE_RESOLUTION,
-	DEFAULT_IMAGE_RESOLUTION
-} from '../../constants';
+	DEFAULT_IMAGE_RESOLUTION, MESSAGE_URL_CHANGE
+} from '../../constants'
 import {isAtMediaDetailPage} from './navigation'
+let imagesForDownload = getDownloadedMedia();
 
 export function isInstPost(mediaNode) {
 	return mediaNode.tagName === 'VIDEO' || (mediaNode.srcset && mediaNode.alt !== 'Instagram')
@@ -270,8 +272,8 @@ export function getDownloadedMedia() {
 		.filter(media => media.srcset !== '' && media.alt !== 'Instagram');
 }
 
-export function handleDownloadAll(images) {
-	images.forEach(media => {
+export function handleDownloadAll() {
+	imagesForDownload.forEach(media => {
 		const src = getMediaSrcAtHomePageOrFeed(media, []);
 		if (src) {
 			chrome.runtime.sendMessage({
@@ -284,15 +286,8 @@ export function handleDownloadAll(images) {
 	})
 }
 
-export function getDownloadMediaForPopupAction(images) {
-	return images.map(media => {
-		return {
-			alt: media.alt,
-			src: media.src,
-			width: media.naturalWidth,
-			height: media.naturalHeight
-		}
-	})
+export function getDownloadMediaForPopupAction() {
+
 }
 
 export function debounce(fn, delay) {
@@ -305,4 +300,36 @@ export function debounce(fn, delay) {
 			fn.apply(context, args);
 		}, delay);
 	};
+}
+
+window.addEventListener('message', function(event) {
+	if (event.data && event.data.type === MESSAGE_URL_CHANGE) {
+		console.log('url change');
+		imagesForDownload = [];
+	}
+});
+
+document.onscroll = debounce(function() {
+	console.log(imagesForDownload.length)
+	const newMedia = getDownloadedMedia();
+	newMedia.forEach(media => {
+		if (!imagesForDownload.find(currentMedia => currentMedia.src === media.src))
+			imagesForDownload.push(media);
+	})
+	console.log(imagesForDownload.length)
+}, 100);
+
+export function getNoImagesOnPage() {
+	return imagesForDownload.length;
+}
+
+export function getAllImageOnPage() {
+	return imagesForDownload.map(media => {
+		return {
+			alt: media.alt,
+			src: media.src,
+			width: media.naturalWidth,
+			height: media.naturalHeight
+		}
+	})
 }
