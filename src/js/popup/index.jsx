@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react"
 import { makeStyles } from '@material-ui/core/styles';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
@@ -8,14 +8,15 @@ import SystemUpdate from '@material-ui/icons/SystemUpdate';
 import Options from './Options';
 import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
+import BulkDownload from './BulkDownload'
 
 const useStyles = makeStyles({
 	root: {
-		height: 460,
+		height: 400,
+		width: 420,
 		display: 'relative'
 	},
 	navBottom: {
-		width: 400,
 		borderTop: '1px solid #e4e7ed'
 	},
 	logo: {
@@ -37,6 +38,7 @@ const Popup = () => {
 				made by <Link>Your Company </Link>
 			</Typography>
 			{value === 0 && <Options/>}
+			{value === 1 && <BulkDownload/>}
 			<BottomNavigation
 				value={value}
 				onChange={(event, newValue) => {

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import CardContent from '@material-ui/core/CardContent'
@@ -14,7 +14,9 @@ import Switcher from './Switcher'
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		margin: '0 auto'
+		margin: '0 auto',
+		'overflow-y': 'scroll',
+		height: 380
 	},
 	content: {
 		justifyContent: 'center',
@@ -38,8 +40,13 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
+
 export default function Options() {
 	const classes = useStyles();
+	
+	const childProps = {
+		classes
+	}
 	
 	return (
 		<div className={classes.root}>
@@ -62,10 +69,10 @@ export default function Options() {
 					<Typography className={classes.headerText}>Download options</Typography>
 				</Grid>
 				<Grid container className={classes.actionArea}>
-					<Switcher classes={classes}/>
-					<ImageResolution classes={classes}/>
-					<IconForm classes={classes}/>
-					<IconPosition classes={classes}/>
+					<Switcher {...childProps}/>
+					<ImageResolution {...childProps}/>
+					<IconForm {...childProps}/>
+					<IconPosition {...childProps}/>
 				</Grid>
 			</Grid>
 		</div>

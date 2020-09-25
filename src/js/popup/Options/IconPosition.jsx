@@ -19,15 +19,14 @@ const useStyles = makeStyles(theme => ({
 const IconPosition = (props) => {
 	const classes = Object.assign({}, props.classes, useStyles());
 	
-	const [iconPosition, setIconPosition] = React.useState(ICON_POSITION_UNDER);
+	const [iconPosition, setIconPosition] = React.useState(null);
 	
 	useEffect(() => {
 		(async function(){
-			const result = await chrome.storage.sync.get([
-				KEY_APP_ICON_POSITION
-			]);
-			if (result[KEY_APP_ICON_POSITION])
-				setIconPosition(result[KEY_APP_ICON_POSITION]);
+			const result = await chrome.storage.sync.get({
+				[KEY_APP_ICON_POSITION]: ICON_POSITION_UNDER
+			});
+			setIconPosition(result[KEY_APP_ICON_POSITION]);
 		})();
 	}, [])
 	

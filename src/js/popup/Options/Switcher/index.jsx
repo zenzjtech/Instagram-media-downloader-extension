@@ -3,6 +3,7 @@ import Switch from '@material-ui/core/Switch'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import {KEY_APP_VISIBILITY} from '../../../constants'
 import Grid from '@material-ui/core/Grid'
+import FormLabel from '@material-ui/core/FormLabel'
 
 const useStyles = makeStyles((theme) => ({
 }));
@@ -14,8 +15,7 @@ const Main = props =>  {
 	useEffect(() => {
 		(async () => {
 			const result = await chrome.storage.sync.get({[KEY_APP_VISIBILITY] : true});
-			console.log(result);
-			if (result[KEY_APP_VISIBILITY] !== undefined)
+			if (result[KEY_APP_VISIBILITY] !== appState)
 				setAppState(result[KEY_APP_VISIBILITY]);
 		})();
 	}, [])
@@ -30,7 +30,10 @@ const Main = props =>  {
 					direction={"row"}
 					alignItems={"center"}
 		>
-			<Grid item xs={5} className={classes.labelIconPosition}>
+			<Grid
+				item xs={5}
+				component={FormLabel}
+				className={classes.labelIconPosition}>
 				Enable download:
 			</Grid>
 			<Grid item>

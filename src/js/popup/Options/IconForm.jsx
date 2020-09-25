@@ -29,14 +29,14 @@ const useStyles = makeStyles(theme => ({
 
 const IconForm = (props) => {
 	const classes = Object.assign({}, props.classes, useStyles());
-	const [iconType, setIconType] = React.useState(ICON_TYPE_SYSTEM_UPDATE_ALT);
+	const [iconType, setIconType] = React.useState(null);
 	
 	useEffect(() => {
 		(async function(){
-			const result = await chrome.storage.sync.get([
-				KEY_APP_ICON_TYPE
-			]);
-			if (result[KEY_APP_ICON_TYPE] !== undefined)
+			const result = await chrome.storage.sync.get({
+				[KEY_APP_ICON_TYPE]: ICON_TYPE_SYSTEM_UPDATE_ALT
+			});
+			if (result[KEY_APP_ICON_TYPE] !== iconType)
 				setIconType(result[KEY_APP_ICON_TYPE]);
 		})();
 	}, [])
@@ -49,8 +49,8 @@ const IconForm = (props) => {
 		})()
 	}, [iconType]);
 	
-	const handleAlignment = (event, newAlignment) => {
-		setIconType(newAlignment);
+	const handleChange = (event, newIconType) => {
+		setIconType(newIconType);
 	};
 	
 	return (
@@ -66,7 +66,7 @@ const IconForm = (props) => {
 				<ToggleButtonGroup
 					value={iconType}
 					exclusive
-					onChange={handleAlignment}
+					onChange={handleChange}
 					aria-label="text alignment"
 				>
 					<ToggleButton value={ICON_TYPE_GET_APP} aria-label="get app">
