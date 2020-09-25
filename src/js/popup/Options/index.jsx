@@ -13,10 +13,8 @@ import IconForm from './IconForm'
 import Switcher from './Switcher'
 
 const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: '0 auto',
-		'overflow-y': 'scroll',
-		height: 380
+	subRoot: {
+		overflowY: 'hidden'
 	},
 	content: {
 		justifyContent: 'center',
@@ -41,15 +39,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function Options() {
-	const classes = useStyles();
+export default function Options(props) {
+	const classes = Object.assign({}, props.classes, useStyles());
 	
 	const childProps = {
 		classes
 	}
 	
 	return (
-		<div className={classes.root}>
+		<div className={classes.subRoot}>
 			<Grid container component={Paper} style={{ paddingBottom: '20px'}}>
 				<Grid
 					container

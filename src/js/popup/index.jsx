@@ -9,12 +9,20 @@ import Options from './Options';
 import Typography from '@material-ui/core/Typography'
 import Link from '@material-ui/core/Link'
 import BulkDownload from './BulkDownload'
+import {MESSAGE_DOWNLOAD_ALL} from '../constants'
+import Tooltip from '@material-ui/core/Tooltip'
 
 const useStyles = makeStyles({
 	root: {
-		height: 400,
+		height: 506,
 		width: 420,
 		display: 'relative'
+	},
+	subRoot: {
+		margin: '0 auto',
+		overflowY: 'scroll',
+		overflowX: 'hidden',
+		height: 451
 	},
 	navBottom: {
 		borderTop: '1px solid #e4e7ed'
@@ -32,13 +40,34 @@ const Popup = () => {
 	const classes = useStyles();
 	const [value, setValue] = React.useState(0);
 	
+	const handleDownloadAll = () => {
+		// If this is a click to navigate to DownloadAll,
+		// We do no thing
+		if (value === 1)
+			return;
+		try {
+			(async () => {
+				const activeTabs = await chrome.tabs.query({
+					active: true,
+					currentWindow: true
+				});
+				const response = await chrome.tabs.sendMessage(activeTabs[0].id, {
+					type: MESSAGE_DOWNLOAD_ALL
+				})
+				console.log(response);
+			})()
+		} catch (e) {
+			console.log(e);
+		}
+	}
+	
 	return (
 		<div className={classes.root}>
 			<Typography className={classes.logo} variant={'caption'}>
 				made by <Link>Your Company </Link>
 			</Typography>
-			{value === 0 && <Options/>}
-			{value === 1 && <BulkDownload/>}
+			{value === 0 && <BulkDownload classes={classes}/>}
+			{value === 1 && <Options classes={classes}/>}
 			<BottomNavigation
 				value={value}
 				onChange={(event, newValue) => {
@@ -46,8 +75,15 @@ const Popup = () => {
 				}}
 				className={classes.navBottom}
 			>
+				<Tooltip
+					title={value === 0 ? "Click here to download all images" : ""}
+				>
+					<BottomNavigationAction
+						label="DownloadAll" icon={<SystemUpdate />}
+						onClick={handleDownloadAll}
+					/>
+				</Tooltip>
 				<BottomNavigationAction label="Options" icon={<SettingIcon />} />
-				<BottomNavigationAction label="DownloadAll" icon={<SystemUpdate />} />
 			</BottomNavigation>
 		</div>
 	);

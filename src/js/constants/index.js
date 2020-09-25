@@ -27,5 +27,10 @@ module.exports = {
 	ICON_TYPE_CLOUD_DOWNLOAD: 'CloudDownloadIcon',
 	ICON_TYPE_SYSTEM_UPDATE: 'SystemUpdateIcon',
 	ICON_TYPE_SYSTEM_UPDATE_ALT: 'SystemUpdateAltIcon',
-	IMAGE_RESOLUTION: [150, 240, 320, 480, 640, 750, 1080]
+	IMAGE_RESOLUTION: [150, 240, 320, 480, 640, 750, 1080],
+	
+	// messgae
+	MESSAGE_DOWNLOAD_ALL: 'msg-download-all',
+	MESSAGE_DOCUMENT_SCROLL: 'msg-document-scroll',
+	MESSAGE_URL_CHANGE: 'msg-url-change'
 }

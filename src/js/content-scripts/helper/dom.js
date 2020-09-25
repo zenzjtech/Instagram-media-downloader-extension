@@ -270,9 +270,8 @@ export function getDownloadedMedia() {
 		.filter(media => media.srcset !== '' && media.alt !== 'Instagram');
 }
 
-export function handleDownloadAll() {
-	const downloadedMedia = getDownloadedMedia();
-	downloadedMedia.forEach(media => {
+export function handleDownloadAll(images) {
+	images.forEach(media => {
 		const src = getMediaSrcAtHomePageOrFeed(media, []);
 		if (src) {
 			chrome.runtime.sendMessage({
@@ -283,4 +282,27 @@ export function handleDownloadAll() {
 			})
 		}
 	})
+}
+
+export function getDownloadMediaForPopupAction(images) {
+	return images.map(media => {
+		return {
+			alt: media.alt,
+			src: media.src,
+			width: media.naturalWidth,
+			height: media.naturalHeight
+		}
+	})
+}
+
+export function debounce(fn, delay) {
+	var timer = null;
+	return function() {
+		var context = this,
+			args = arguments;
+		clearTimeout(timer);
+		timer = setTimeout(function() {
+			fn.apply(context, args);
+		}, delay);
+	};
 }

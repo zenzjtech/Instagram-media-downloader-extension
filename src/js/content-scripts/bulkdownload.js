@@ -1,9 +1,15 @@
 import {
 	TOPRIGHT_NAV_CLASSNAME,
-	DOWNLOAD_ALL_MODAL_CLASSNAME, MSG_DOWNLOAD_FILE, IDFI_BUTTON, IDFI_BUTTON_DOWNLOAD_ALL
+	DOWNLOAD_ALL_MODAL_CLASSNAME,
+	MSG_DOWNLOAD_FILE,
+	IDFI_BUTTON,
+	IDFI_BUTTON_DOWNLOAD_ALL,
+	MESSAGE_URL_CHANGE,
+	MESSAGE_DOCUMENT_SCROLL
 } from '../constants'
 import $ from 'jquery';
-import {handleDownloadAll, getDownloadedMedia} from './helper/'
+import {handleDownloadAll, getDownloadedMedia, debounce, getDownloadMediaForPopupAction} from './helper'
+let imagesForDownload = [];
 
 export function loadBulkDownloadUI() {
 	let counter = 0;
@@ -89,8 +95,36 @@ function createDownloadAllPopup(currentElement) {
 
 function handleClick(event) {
 	const downloadAllPopup = createDownloadAllPopup(this);
-	downloadAllPopup.innerHTML = popupHtml(getDownloadedMedia().length);
+	downloadAllPopup.innerHTML = popupHtml(imagesForDownload.length);
 	downloadAllPopup.style.display = downloadAllPopup.style.display === 'block' ? 'none' : 'block';
-	document.getElementById('download-all-btn').onclick = handleDownloadAll;
+	document.getElementById('download-all-btn').onclick = () => handleDownloadAll(imagesForDownload);
 }
 
+window.addEventListener('message', function(event) {
+	if (event.data && event.data.type === MESSAGE_URL_CHANGE) {
+		console.log('url change');
+		imagesForDownload = [];
+	}
+});
+
+document.onscroll = debounce(function() {
+	console.log(imagesForDownload.length)
+	const newMedia = getDownloadedMedia();
+	newMedia.forEach(media => {
+		if (!imagesForDownload.find(currentMedia => currentMedia.src === media.src))
+			imagesForDownload.push(media);
+	})
+	console.log(imagesForDownload.length)
+}, 100);
+
+
+/*document.onscroll = debounce(function() {
+	try {
+		chrome.runtime.sendMessage({
+			type: MESSAGE_DOCUMENT_SCROLL,
+			payload: getDownloadMediaForPopupAction(imagesForDownload)
+		})
+	} catch (e) {
+		console.log(e);
+	}
+}, 200);*/
