@@ -3,7 +3,7 @@ import {
 	DOWNLOAD_ALL_MODAL_CLASSNAME, MSG_DOWNLOAD_FILE, IDFI_BUTTON, IDFI_BUTTON_DOWNLOAD_ALL
 } from '../constants'
 import $ from 'jquery';
-import {getMediaSrcAtHomePageOrFeed} from './helper/'
+import {handleDownloadAll, getDownloadedMedia} from './helper/'
 
 export function loadBulkDownloadUI() {
 	let counter = 0;
@@ -86,25 +86,6 @@ function createDownloadAllPopup(currentElement) {
 	return popupContainer;
 }
 
-function getDownloadedMedia() {
-	return Array.from(document.getElementsByTagName('img'))
-		.filter(media => media.srcset !== '' && media.alt !== 'Instagram');
-}
-
-function handleDownloadAll() {
-	const downloadedMedia = getDownloadedMedia();
-	downloadedMedia.forEach(media => {
-		const src = getMediaSrcAtHomePageOrFeed(media, []);
-		if (src) {
-			chrome.runtime.sendMessage({
-				type: MSG_DOWNLOAD_FILE,
-				payload: src
-			}, function (response) {
-				console.log(response);
-			})
-		}
-	})
-}
 
 function handleClick(event) {
 	const downloadAllPopup = createDownloadAllPopup(this);

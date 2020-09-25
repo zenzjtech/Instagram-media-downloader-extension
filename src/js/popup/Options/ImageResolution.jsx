@@ -12,14 +12,15 @@ import {KEY_APP_IMAGE_RESOLUTION} from '../../constants'
 const ImageResolution = (props) => {
 	const { classes } = props;
 	
-	const [resolution, setResolution] = React.useState(null);
+	const [resolution, setResolution] = React.useState(6);
 	
 	useEffect(() => {
 		(async function(){
 			const result = await chrome.storage.sync.get({
 				[KEY_APP_IMAGE_RESOLUTION]: 6
 			});
-			setResolution(result[KEY_APP_IMAGE_RESOLUTION]);
+			if (result[KEY_APP_IMAGE_RESOLUTION] !== 6)
+				setResolution(result[KEY_APP_IMAGE_RESOLUTION]);
 		})();
 	}, [])
 	

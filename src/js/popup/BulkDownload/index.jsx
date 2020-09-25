@@ -25,15 +25,36 @@ const tileData = [
 	}
 ];
 
+const getListDownloadMediaScript =`
+function getDownloadedMedia() {
+	return Array
+		.from(document.getElementsByTagName('img'))
+		.filter(media => media.srcset !== '' && media.alt !== 'Instagram');
+}
+
+getDownloadedMedia();
+`
+
 export default function BulkDownload() {
 	const classes = useStyles();
 	
+	const handleClick = async () => {
+		const result = await chrome.tabs.executeScript({
+		 code: getListDownloadMediaScript
+		});
+		console.log(result);
+	}
 	return (
 		<div className={classes.root}>
 			<GridList cellHeight={50} className={classes.gridList} cols={3}>
 				{tileData.map((tile) => (
 					<GridListTile key={tile.img} cols={tile.cols || 1}>
-						<img src={tile.img} style={{width: 50}} alt={tile.title} />
+						<img
+							onClick={handleClick}
+							src={tile.img}
+							style={{width: 50}}
+							alt={tile.title}
+						/>
 					</GridListTile>
 				))}
 			</GridList>

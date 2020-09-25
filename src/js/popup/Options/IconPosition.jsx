@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import Tooltip from '@material-ui/core/Tooltip'
 import Grid from '@material-ui/core/Grid'
 import FormLabel from '@material-ui/core/FormLabel'
@@ -19,18 +19,24 @@ const useStyles = makeStyles(theme => ({
 const IconPosition = (props) => {
 	const classes = Object.assign({}, props.classes, useStyles());
 	
-	const [iconPosition, setIconPosition] = React.useState(null);
+	const [iconPosition, setIconPosition] = React.useState(ICON_POSITION_UNDER);
+	const [firstTimeRender, setFirstTimeRender] = useState(true);
 	
 	useEffect(() => {
 		(async function(){
 			const result = await chrome.storage.sync.get({
 				[KEY_APP_ICON_POSITION]: ICON_POSITION_UNDER
 			});
-			setIconPosition(result[KEY_APP_ICON_POSITION]);
+			if (result[KEY_APP_ICON_POSITION] !== iconPosition)
+				setIconPosition(result[KEY_APP_ICON_POSITION]);
 		})();
 	}, [])
 	
 	useEffect(() => {
+		if (firstTimeRender) {
+			setFirstTimeRender(false);
+			return;
+		}
 		(async function() {
 			await chrome.storage.sync.set({
 				[KEY_APP_ICON_POSITION]: iconPosition,

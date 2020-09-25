@@ -29,7 +29,8 @@ const useStyles = makeStyles(theme => ({
 
 const IconForm = (props) => {
 	const classes = Object.assign({}, props.classes, useStyles());
-	const [iconType, setIconType] = React.useState(null);
+	const [iconType, setIconType] = React.useState(ICON_TYPE_SYSTEM_UPDATE_ALT);
+	const [firstTimeRender, setFirstTimeRender] = React.useState(true);
 	
 	useEffect(() => {
 		(async function(){
@@ -42,6 +43,10 @@ const IconForm = (props) => {
 	}, [])
 	
 	useEffect(() => {
+		if (firstTimeRender) {
+			setFirstTimeRender(false);
+			return;
+		}
 		(async function() {
 			await chrome.storage.sync.set({
 				[KEY_APP_ICON_TYPE]: iconType
@@ -60,7 +65,7 @@ const IconForm = (props) => {
 				className={classes.labelIconPosition}
 				xs={5}
 			>
-				Icon types:
+				Icon type:
 			</Grid>
 			<Grid item>
 				<ToggleButtonGroup

@@ -13,7 +13,9 @@ import {
 	ICON_POSITION_BOTTOMLEFT,
 	ICON_POSITION_BOTTOMRIGHT,
 	KEY_LOCALSTORAGE_IMAGE_RESOLUTION,
-	IMAGE_RESOLUTION, KEY_APP_ICON_TYPE, ICON_TYPE_SYSTEM_UPDATE_ALT, IDFI_BUTTON_DOWNLOAD_ALL
+	IMAGE_RESOLUTION, KEY_APP_ICON_TYPE,
+	ICON_TYPE_SYSTEM_UPDATE_ALT,
+	IDFI_BUTTON_DOWNLOAD_ALL
 } from '../constants'
 import { loadBulkDownloadUI } from './bulkdownload';
 import {
@@ -187,10 +189,8 @@ const action = function () {
 				videoData
 			});
 			// Set custom style
-			console.log(icon.style)
 			if (icon.style) {
 				Object.entries(icon.style).forEach(([key, val]) => {
-					console.log(key, val);
 					downloadButton.style[key] = val;
 				})
 			}

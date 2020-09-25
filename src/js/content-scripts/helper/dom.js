@@ -265,3 +265,22 @@ export function getMediaSrcAtHomePageOrFeed(media, videoData) {
 	return getCustomResolutionImg(media);
 }
 
+export function getDownloadedMedia() {
+	return Array.from(document.getElementsByTagName('img'))
+		.filter(media => media.srcset !== '' && media.alt !== 'Instagram');
+}
+
+export function handleDownloadAll() {
+	const downloadedMedia = getDownloadedMedia();
+	downloadedMedia.forEach(media => {
+		const src = getMediaSrcAtHomePageOrFeed(media, []);
+		if (src) {
+			chrome.runtime.sendMessage({
+				type: MSG_DOWNLOAD_FILE,
+				payload: src
+			}, function (response) {
+				console.log(response);
+			})
+		}
+	})
+}
