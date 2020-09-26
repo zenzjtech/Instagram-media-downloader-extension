@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import SettingIcon from '@material-ui/icons/Settings';
-import SystemUpdate from '@material-ui/icons/SystemUpdate';
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 import Options from './Options';
 import Typography from '@material-ui/core/Typography'
@@ -75,7 +75,7 @@ const Popup = () => {
 					title={value === 0 ? "Click here to download all images" : ""}
 				>
 					<BottomNavigationAction
-						label="DownloadAll" icon={<SystemUpdate />}
+						label="DownloadAll" icon={<GetAppIcon />}
 						onClick={handleDownloadAll}
 					/>
 				</Tooltip>

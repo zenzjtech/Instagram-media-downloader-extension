@@ -41,9 +41,14 @@ async function sendMessageToActiveTab(message) {
 	return response;
 }
 
+function plural(text, counter) {
+	return !counter ? text : text + 's';
+}
+
 module.exports = {
 	fetchAdditionalData,
 	fetchSingleNodeData,
-	sendMessageToActiveTab
+	sendMessageToActiveTab,
+	plural
 }
 

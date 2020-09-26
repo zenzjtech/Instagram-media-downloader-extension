@@ -50,7 +50,7 @@ export function loadBulkDownloadUI() {
 const popupHtml = (noMedia = 0) => `
 <div class="card text-center">
   <div class="card-header">
-    Bulk posts download feature
+    Bulk posts download
   </div>
   <div class="card-body"
     style="display: flex;
