@@ -16,7 +16,7 @@ import {
 } from '../../constants'
 import {isAtMediaDetailPage} from './navigation'
 
-let imagesForDownload;
+let imagesForDownload = [];
 loadNewImage();
 
 let intervalCounter = 0;
