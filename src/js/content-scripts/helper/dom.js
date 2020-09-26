@@ -15,7 +15,17 @@ import {
 	DEFAULT_IMAGE_RESOLUTION, MESSAGE_URL_CHANGE
 } from '../../constants'
 import {isAtMediaDetailPage} from './navigation'
-let imagesForDownload = getDownloadedMedia();
+
+let imagesForDownload;
+loadNewImage();
+
+let intervalCounter = 0;
+const interval = setInterval(function() {
+	intervalCounter += 1;
+	if (intervalCounter === 5)
+		clearInterval(interval);
+	imagesForDownload = getDownloadedMedia();
+}, 500);
 
 export function isInstPost(mediaNode) {
 	return mediaNode.tagName === 'VIDEO' || (mediaNode.srcset && mediaNode.alt !== 'Instagram')
@@ -286,8 +296,27 @@ export function handleDownloadAll() {
 	})
 }
 
-export function getDownloadMediaForPopupAction() {
+export function getNoImagesOnPage() {
+	return imagesForDownload.length;
+}
 
+export function getAllImageOnPage() {
+	return imagesForDownload.map(media => {
+		return {
+			alt: media.alt,
+			src: media.src,
+			width: media.naturalWidth,
+			height: media.naturalHeight
+		}
+	})
+}
+
+function loadNewImage() {
+	const newMedia = getDownloadedMedia();
+	newMedia.forEach(media => {
+		if (!imagesForDownload.find(currentMedia => currentMedia.src === media.src))
+			imagesForDownload.push(media);
+	})
 }
 
 export function debounce(fn, delay) {
@@ -310,26 +339,8 @@ window.addEventListener('message', function(event) {
 });
 
 document.onscroll = debounce(function() {
-	console.log(imagesForDownload.length)
-	const newMedia = getDownloadedMedia();
-	newMedia.forEach(media => {
-		if (!imagesForDownload.find(currentMedia => currentMedia.src === media.src))
-			imagesForDownload.push(media);
-	})
-	console.log(imagesForDownload.length)
+	loadNewImage();
 }, 100);
 
-export function getNoImagesOnPage() {
-	return imagesForDownload.length;
-}
 
-export function getAllImageOnPage() {
-	return imagesForDownload.map(media => {
-		return {
-			alt: media.alt,
-			src: media.src,
-			width: media.naturalWidth,
-			height: media.naturalHeight
-		}
-	})
-}
+
