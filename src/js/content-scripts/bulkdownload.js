@@ -27,9 +27,10 @@ export function loadBulkDownloadUI() {
 			if (container)
 				return;
 			
-			const bulkDownloadIconPath = chrome.runtime.getURL('asset/img/download_all_square.svg');
+			const bulkDownloadIconPath = chrome.runtime.getURL('asset/img/icon.png');
 			const img = document.createElement('div');
 			img.style.backgroundImage = `url(${bulkDownloadIconPath})`;
+			img.style.backgroundSize = '22px';
 			img.className = 'download-all';
 			img.setAttribute('type', IDFI_BUTTON);
 			img.setAttribute('name', IDFI_BUTTON_DOWNLOAD_ALL);

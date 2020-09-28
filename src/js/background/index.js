@@ -14,5 +14,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 })
 
 chrome.runtime.onInstalled.addListener(function() {
-	chrome.tabs.create({ url: 'https://google.com' })
+	chrome.tabs.create({ url: 'https://instaload.io/chrome-installation-successful/' })
 })
+
+chrome.runtime.setUninstallURL('https://instaload.io/chrome-deinstallation-successful/');

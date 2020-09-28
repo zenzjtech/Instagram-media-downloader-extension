@@ -21,7 +21,6 @@ const useStyles = makeStyles({
 	},
 	subRoot: {
 		margin: '0 auto',
-		overflowY: 'scroll',
 		overflowX: 'hidden',
 		height: 451
 	},
@@ -57,10 +56,16 @@ const Popup = () => {
 		}
 	}
 	
+	const handleLinkClick = () => {
+		chrome.tabs.create(({
+			url: 'https://instaload.io'
+		}))
+	}
+	
 	return (
 		<div className={classes.root}>
 			<Typography className={classes.logo} variant={'caption'}>
-				made by <Link>Your Company </Link>
+				Made by <Link onClick={handleLinkClick}>InstaLoad.io</Link>
 			</Typography>
 			{value === 0 && <BulkDownload classes={classes}/>}
 			{value === 1 && <Options classes={classes}/>}

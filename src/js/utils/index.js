@@ -42,7 +42,7 @@ async function sendMessageToActiveTab(message) {
 }
 
 function plural(text, counter) {
-	return !counter ? text : text + 's';
+	return counter < 2 ? text : text + 's';
 }
 
 module.exports = {
